@@ -17,7 +17,7 @@ definitions:
         type: string
       value:
         description: The credit card issued Bank Identification Number (BIN).
-        example: "99999"
+        example: "9999999"
         type: string
     required:
     - end_range
