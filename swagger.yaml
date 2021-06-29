@@ -1,0 +1,266 @@
+basePath: /
+definitions:
+  handler.HTTPError:
+    properties:
+      message:
+        type: object
+    type: object
+  Bin:
+    properties:
+      end_range:
+        description: The end of the BIN range.
+        example: "999999999"
+        type: string
+      start_range:
+        description: The start of the BIN range.
+        example: "0"
+        type: string
+      value:
+        description: The credit card issued Bank Identification Number (BIN).
+        example: "999999"
+        type: string
+    required:
+    - end_range
+    - start_range
+    - value
+    type: object
+  Cedente:
+    properties:
+      id:
+        description: The assignor identifier.
+        type: integer
+      name:
+        description: The assignor name.
+        type: string
+    type: object
+  Program:
+    properties:
+      assignor_charge:
+        $ref: '#/definitions/Cedente'
+        description: The billing assignor identifier.
+      assignor_invoice:
+        $ref: '#/definitions/Cedente'
+        description: The statement assignor identifier.
+      bin:
+        $ref: '#/definitions/Bin'
+      brand:
+        description: The brand of the cards issued in this program.
+        example: PRIVATE
+        type: string
+      css:
+        type: string
+      id:
+        description: The program identifier.
+        example: 1
+        type: integer
+      initial_card_status:
+        description: The initial lifetime stage of cards created in this program.
+        example: CREATED
+        type: string
+      name:
+        description: The program name.
+        example: Pismolabs Homolog
+        type: string
+      print_card:
+        description: The print card identify if cards should be issued
+        type: boolean
+      provider:
+        $ref: '#/definitions/Provider'
+      type:
+        description: The program type.
+        example: DEBITO
+        type: string
+      url_image:
+        description: URL of the image the program
+        type: string
+    type: object
+  ProgramPage:
+    properties:
+      current_page:
+        default: 1
+        description: The current result page.
+        example: 1
+        type: integer
+      items:
+        items:
+          $ref: '#/definitions/Program'
+        type: array
+      pages:
+        default: 1
+        description: The total number of result pages.
+        example: 1
+        type: integer
+      per_page:
+        default: 10
+        description: The maximum item per result page.
+        example: 10
+        type: integer
+      total_items:
+        description: The total number of items.
+        example: 1
+        type: integer
+    type: object
+  Provider:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  ProgramDueDateListV2:
+      description: List of due dates of the program
+      type: object
+      properties:
+        total_items:
+          description: The total number of items.
+          type: integer
+          example: 1
+        per_pages:
+          description: The maximum item per result page.
+          type: integer
+          example: 10
+        pages:
+          description: The total number of result pages.
+          type: integer
+          example: 1
+        current_page:
+          description: The current result page.
+          type: integer
+          example: 1
+        items:
+          description: Due Date objects
+          type: array
+          items:
+            type: object
+            properties:
+              active:
+                type: boolean
+                description: A flag indicating if due date is active
+                example: true
+              id:
+                type: integer
+                description: The due date ID
+                example: 1234
+              day:
+                type: integer
+                description: The due date
+                example: 10
+              exists_account:
+                type: boolean
+                description: A flag indicating if there any account related
+                example: true
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a Programs API documentation.
+  title: Pismo Programs-API
+  version: "1.0"
+paths:
+  /v1/programs:
+    get:
+      consumes:
+      - application/json
+      description: return a list of paginated programs
+      operationId: programs
+      parameters:
+      - description: 'Page must be greater than 0. Default: 1.'
+        in: query
+        name: page
+        type: integer
+      - description: 'PerPage must be greater than 0. Default: 10.'
+        in: query
+        name: perPage
+        type: integer
+      - description: 'Order must be ASC or DESC. Default: ASC.'
+        in: query
+        name: order
+        type: string
+      - description: 'Order must be ID or NAME. Default: ID.'
+        in: query
+        name: orderBy
+        type: string
+      - description: TN-00000000000001
+        in: header
+        name: x-tenant
+        required: true
+        type: string
+      - description: CID-0001
+        in: header
+        name: x-cid
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ProgramPage'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.HTTPError'
+      summary: Return a list of paginated programs
+      tags:
+      - program
+  /v1/programs/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get program by ID
+      operationId: program
+      parameters:
+      - description: Program ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: TN-00000000000001
+        in: header
+        name: x-tenant
+        required: true
+        type: string
+      - description: CID-0001
+        in: header
+        name: x-cid
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Program'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.HTTPError'
+      summary: Return a program
+      tags:
+      - program
+  /v2/programs/{programId}/duedates:
+    get:
+      consumes:
+      - application/json
+      description: Return the program due dates list
+      tags:
+        - program
+      parameters:
+      - description: The program identification
+        in: path
+        name: programId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        '200':
+          description: Program due dates list
+          schema:
+            $ref: '#/definitions/ProgramDueDateListV2'
+        '401':
+          description: Access token is missing or invalid.
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error.
+swagger: "2.0"
