@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Brooklyn Client Ref",
-    "version": "v0.6.0",
+    "version": "1.2.0",
     "description": "Client API endpoints for the Synamedia Brooklyn Video Platform"
   },
   "servers": [
