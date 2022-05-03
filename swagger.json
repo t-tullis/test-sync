@@ -2197,7 +2197,7 @@
         "tags": [
           "Bookings"
         ],
-        "summary": "Create or update a booking",
+        "summary": "Create or update a booking(updating here)",
         "operationId": "upsertBooking",
         "parameters": [
           {
