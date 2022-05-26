@@ -20,4 +20,4 @@ jobs:
         # Docs: https://docs.github.com/actions/using-workflows/workflow-syntax-for-github-actions#example-using-versioned-actions
         uses: readmeio/rdme@7.2.0
         with:
-          rdme: openapi ./swagger.json --key=BvqCO0cV8G1q6ENkh8brHMuUNFRCLZGA --id=627180fb79db8100284ce377
+          rdme: openapi ./swagger.yaml --key=BvqCO0cV8G1q6ENkh8brHMuUNFRCLZGA --id=6274476ae9dc430060ad8800
