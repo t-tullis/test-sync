@@ -1,5 +1,5 @@
 ---
-title: All it takes is one sync? 
+title: Syncing test2.md? 
 excerpt: Update your docs automatically with `rdme`, ReadMe's official CLI and GitHub Action!
 category: 63090e2e7775ae00270033c5
 ---
