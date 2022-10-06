@@ -15,10 +15,16 @@ jobs:
         uses: actions/checkout@v3
 
       # Run GitHub Action to sync OpenAPI file at [path-to-file.json]
-      - name: GitHub Action
+      - name: Syncing OAS
         # We recommend specifying a fixed version, i.e. @7.2.0
         # Docs: https://docs.github.com/actions/using-workflows/workflow-syntax-for-github-actions#example-using-versioned-actions
         uses: readmeio/rdme@7.2.0
         with:
-          oas: openapi ./swagger.json --key=${{ secrets.README_OAS_TEST }} --id=632e0581a0db4601c0763060
-          docs: docs ./singledoc --key=${{ secrets.README_OAS_TEST }} --version=1.0 
+          rdme: openapi ./swagger.json --key=${{ secrets.README_OAS_TEST }} --id=632e0581a0db4601c0763060
+      
+      - name: Syncing Docs
+        # We recommend specifying a fixed version, i.e. @7.2.0
+        # Docs: https://docs.github.com/actions/using-workflows/workflow-syntax-for-github-actions#example-using-versioned-actions
+        uses: readmeio/rdme@7.2.0
+        with:
+          rdme: docs ./singledoc --key=${{ secrets.README_OAS_TEST }} --version=1.0 
