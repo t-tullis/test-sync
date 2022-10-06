@@ -20,4 +20,5 @@ jobs:
         # Docs: https://docs.github.com/actions/using-workflows/workflow-syntax-for-github-actions#example-using-versioned-actions
         uses: readmeio/rdme@7.2.0
         with:
-          rdme: openapi ./swagger.json --key=${{ secrets.README_OAS_TEST }} --id=632e0581a0db4601c0763060
+          oas: openapi ./swagger.json --key=${{ secrets.README_OAS_TEST }} --id=632e0581a0db4601c0763060
+          docs: docs ./singledoc --key=${{ secrets.README_OAS_TEST }} --version=1.0 
