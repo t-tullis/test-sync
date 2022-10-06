@@ -20,4 +20,4 @@ jobs:
         # Docs: https://docs.github.com/actions/using-workflows/workflow-syntax-for-github-actions#example-using-versioned-actions
         uses: readmeio/rdme@7.2.0
         with:
-          rdme: docs ./documents  --version=1.0
+          rdme: docs ./documents/test2.md  --key={{ secrets.README_OAS_TEST }} --version=1.0
