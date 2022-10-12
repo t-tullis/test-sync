@@ -19,7 +19,7 @@
         "tags": [
           ""
         ],
-        "summary": "Retrieves All Users(AUG 26th RESYNC TEST)",
+        "summary": "Retrieves All Users(OCT 12th RESYNC TEST)",
         "operationId": "getAllUsers",
         "description": "Collects all users ",
         "responses": {            
