@@ -19,7 +19,7 @@
         "tags": [
           ""
         ],
-        "summary": "Retrieves All Users(OCT 12th RESYNC TEST)",
+        "summary": "Retrieves All Users",
         "operationId": "getAllUsers",
         "description": "Collects all users ",
         "responses": {            
@@ -129,7 +129,7 @@
         "tags": [
           "Users"
         ],
-        "summary": "Creates a User (TICKET ENDPOINT)",
+        "summary": "Creates a User (OCT 12th RESYNC TEST)",
         "operationId": "createUser",
         "description": "Creates a new user(TESTING RESYNC)",
         "requestBody": {
@@ -258,26 +258,17 @@
             "type": "string",
             "description": "user's email"
           },
-          "X-API-KEY": {
-            "type": "string",
-            "description": "Test"
-          },
-          "wasUpdate": {
-            "type": "boolean",
-            "description": "Was the file updated?"
-          },
-          "X-ORG-CODE": {
-            "type": "string",
-            "description": "Test"
-          },
           "firstName": {
             "type": "string",
             "description": "Adding a description here will will have the description populate in the area marked in your second screenshot"
           },
           "lastName": {
             "type": "string",
-            "description": "user's last name",
-            "readOnly": true
+            "description": "the user's last name"
+          },
+          "Testing": {
+          "type": "string",
+          "description": "Working?"
           },
           "password": {
             "type": "string",
