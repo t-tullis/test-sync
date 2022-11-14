@@ -1,10 +1,12 @@
 ---
 title: Syncing test2.md? 
 excerpt: Update your docs automatically with `rdme`, ReadMe's official CLI and GitHub Action!
+category: 636eacf7f8986900170bb1f4
+order: 1
 ---
-## What happens?
-Does this go anywhere?
-Testing to see if you can sync HTML code blocks.
+## Does it work?
+
+Does this page go to the top?
 
 [block:html]
 {

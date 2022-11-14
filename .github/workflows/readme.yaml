@@ -23,4 +23,4 @@ jobs:
       - name: Syncing Docs
         uses: readmeio/rdme@7.2.0
         with:
-          rdme: docs ./singledoc --key=${{ secrets.README_OAS_TEST }} --version=1.0 --id=63090e2e7775ae00270033c5
+          rdme: docs ./singledoc --key=${{ secrets.README_OAS_TEST }} --version=1.0
