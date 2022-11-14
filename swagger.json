@@ -17,7 +17,7 @@
     "/users": {
       "get": {
         "tags": [
-          ""
+          "Users"
         ],
         "summary": "Retrieves All Users",
         "operationId": "getAllUsers",
@@ -41,36 +41,6 @@
             }
           }
         },
-        "404": {
-          "description": "Teacher not found",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "404": {
-          "description": "School not found",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
         "400": {
           "description": "Bad Request"
         }
@@ -80,6 +50,7 @@
     "/users/update/": {
       "put": {
         "tags": [
+        "Users"
         ],
         "description": "Updates the specific user by email. All fields aren't required to update the user object",
         "deprecated": true,
