@@ -243,6 +243,7 @@
           },
           "password": {
             "type": "string",
+            "format": "password",
             "description": "user's password"
           },
           "date": {
