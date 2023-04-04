@@ -52,7 +52,7 @@
         "tags": [
         "Users"
         ],
-        "description": "Updates the specific user by email. All fields aren't required to update the user object",
+        "description": "Updates the specific user by email. All fields aren't required to update the user object [TESTING PRIVATE SYNC]",
         "deprecated": true,
         "parameters": [
           {
