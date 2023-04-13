@@ -26,6 +26,6 @@ jobs:
       #     rdme: docs ./documents --key=${{ secrets.README_OAS_TEST }} --version=1.0
 
       - name: Syncing Changelog
-        uses: readmeio/rdme@7.2.0
+        uses: readmeio/rdme@v8
         with:
           rdme: changelogs ./singledoc  --key=${{ secrets.README_OAS_TEST }} --version=1.0

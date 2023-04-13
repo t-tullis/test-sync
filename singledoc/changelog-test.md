@@ -4,4 +4,4 @@ excerpt: Update your docs automatically with `rdme`, ReadMe's official CLI and G
 type: fixed
 ---
 
-This is a test lets see here!!!
+This is a test lets see here!!
