@@ -18,7 +18,7 @@ jobs:
       - name: Syncing OAS
         uses: readmeio/rdme@7.2.0
         with:
-          rdme: openapi ./swagger.json --key=${{ secrets.README_OAS_TEST }} --id=632e0581a0db4601c0763060
+          rdme: openapi ./swagger.json --key=${{ secrets.README_OAS_TEST }} --id=${{ secrets.API_DEFINITION_ID}}
 
       # - name: Syncing Docs
       #   uses: readmeio/rdme@7.2.0
