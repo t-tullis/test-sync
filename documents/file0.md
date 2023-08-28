@@ -1,7 +1,7 @@
 ---
 title: File 0
 excerpt: Update your docs automatically with `rdme`, ReadMe's official CLI and GitHub Action!
-category: 64d501188310531dda9fa09b
+category: 63090e2e7775ae00270033c5
 ---
 
 # File 0
