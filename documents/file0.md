@@ -10,4 +10,4 @@ category: 6553a4fcdb4baf0071b9e458
 
 Does this work?
 
-<img src=`https://github.com/t-tullis/test-sync/blob/c62513f7d497d6d0781dcd065c61568ce088eb3b/images/Screenshot%202023-08-28%20at%201.48.32%20PM.png?token=${{ secrets.IMAGE_TOKEN }}raw=true` />
+![image](https://raw.githubusercontent.com/t-tullis/test-sync/master/images/Screenshot%202023-08-28%20at%201.48.32%20PM.png?token=${{ secrets.IMAGE_TOKEN }})
