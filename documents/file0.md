@@ -10,4 +10,19 @@ category: 6553a4fcdb4baf0071b9e458
 
 Testing Images
 
-<img href="https://github.com/t-tullis/test-sync/blob/c62513f7d497d6d0781dcd065c61568ce088eb3b/images/Screenshot%202023-08-28%20at%201.48.32%20PM.png?raw=true"/>
+<img href="https://github.com/t-tullis/test-sync/blob/c62513f7d497d6d0781dcd065c61568ce088eb3b/images/Screenshot%202023-08-28%20at%201.48.32%20PM.png?raw=true" />
+
+[block:image]
+{
+"images": [
+{
+"image": [
+"https://github.com/t-tullis/test-sync/blob/c62513f7d497d6d0781dcd065c61568ce088eb3b/images/Screenshot%202023-08-28%20at%201.48.32%20PM.png?raw=true",
+"",
+""
+],
+"align": "center"
+}
+]
+}
+[/block]
