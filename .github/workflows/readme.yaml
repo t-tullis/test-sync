@@ -28,7 +28,7 @@ jobs:
       - name: Syncing Docs
         uses: readmeio/rdme@7.2.0
         with:
-          rdme: docs ./documents --key=${{ secrets.README_OAS_TEST }} --version=1.0
+          rdme: docs ./documents --key=${{ secrets.README_OAS_TEST }} --version=2.0
 
       # - name: Syncing Changelog
       #   uses: readmeio/rdme@v8
