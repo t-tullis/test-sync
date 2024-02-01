@@ -16,42 +16,38 @@
   "paths": {
     "/users": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Retrieves All Users",
         "operationId": "getAllUsers",
         "description": "Collects all users ",
-        "responses": {            
+        "responses": {
           "200": {
-          "description": "OK"
-        },
-        "404": {
-          "description": "Category not found",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
+            "description": "OK"
+          },
+          "404": {
+            "description": "Category not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request"
           }
-        },
-        "400": {
-          "description": "Bad Request"
         }
       }
-    }
-  },
+    },
     "/users/update/": {
       "put": {
-        "tags": [
-        "Users"
-        ],
+        "tags": ["Users"],
         "description": "Updates the specific user by email. All fields aren't required to update the user object [TESTING PRIVATE SYNC]",
         "deprecated": true,
         "parameters": [
@@ -60,10 +56,7 @@
             "name": "email",
             "schema": {
               "type": "string",
-              "enum": [
-                "AKAMAI",
-                "THIRD_PARTY"
-              ],
+              "enum": ["AKAMAI", "THIRD_PARTY"],
               "example": "AKAMAI"
             },
             "required": true,
@@ -97,10 +90,8 @@
             "TestAuth": []
           }
         ],
-        "tags": [
-          "Users"
-        ],
-        "summary": "Creates a User (OCT 12th RESYNC TEST)",
+        "tags": ["Users"],
+        "summary": "Creates a User (FEB 1st RESYNC TEST)",
         "operationId": "createUser",
         "description": "Creates a new user(TESTING RESYNC)",
         "requestBody": {
@@ -133,9 +124,7 @@
     },
     "/users/{email}": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "operationId": "quickTest",
         "description": "Returns a user by a specific email",
         "parameters": [
@@ -168,9 +157,7 @@
     },
     "/users/delete/{email}": {
       "delete": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Deletes a user",
         "operationId": "deleteUserByEmail",
         "description": "Deletes a user by the specified email given",
@@ -220,10 +207,7 @@
     "schemas": {
       "User": {
         "type": "object",
-        "required": [
-          "email",
-          "password"
-        ],
+        "required": ["email", "password"],
         "properties": {
           "email": {
             "type": "string",
@@ -238,8 +222,8 @@
             "description": "the user's last name"
           },
           "Testing": {
-          "type": "string",
-          "description": "Working?"
+            "type": "string",
+            "description": "Working?"
           },
           "password": {
             "type": "string",
@@ -310,11 +294,8 @@
   },
   "x-readme": {
     "explorer-enabled": true,
-    "samples-enabled": true,    
-    "proxy-enabled": true,    
-    "samples-languages": [
-      "node",
-      "curl"
-  ]
+    "samples-enabled": true,
+    "proxy-enabled": true,
+    "samples-languages": ["node", "curl"]
   }
 }
