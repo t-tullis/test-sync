@@ -91,7 +91,7 @@
           }
         ],
         "tags": ["Users"],
-        "summary": "Creates a User (FEB 1st RESYNC TEST)",
+        "summary": "Creates a User (ONE MORE TEST RESYNC TEST)",
         "operationId": "createUser",
         "description": "Creates a new user(TESTING RESYNC)",
         "requestBody": {
