@@ -1,9 +1,11 @@
 ---
 title: File 2
 excerpt: Update your docs automatically with `rdme`, ReadMe's official CLI and GitHub Action!
-category: 654d13ac631e760042ab3984
+category: 65d520a9011b29007e3e076b
 ---
 
 # File 2
 
-removed order
+This should work!
+
+<ReusableTest >
