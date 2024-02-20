@@ -8,4 +8,4 @@ category: 65d520a9011b29007e3e076b
 
 This should work!
 
-<ReusableTest >
+<ReusableTest />
