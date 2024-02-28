@@ -1,101 +1,247 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "version": "1.0",
-    "title": "Private Repo Test",
-    "license": {
-      "name": "ISC"
-    },
-    "description": "Lets see what appears? is anything changing?"
+    "version": "1.0.0",
+    "title": "PromptDefender - PII and Prompt Injection Verification Service",
+    "description": "PromptDefender's API provides a mechanism to strip PII and check for prompt injection, ensuring safe text processing.",
+    "contact": {
+      "name": "Support",
+      "email": "admin@safetorun.com"
+    }
   },
   "servers": [
     {
-      "url": "https://google.com/{version}"
+      "url": "https://prompt.safetorun.com",
+      "description": "Production server"
     }
   ],
   "paths": {
-    "/users": {
-      "get": {
-        "tags": ["Users"],
-        "summary": "Retrieves All Users",
-        "operationId": "getAllUsers",
-        "description": "Collects all users ",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Category not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/users/update/": {
-      "put": {
-        "tags": ["Users"],
-        "description": "Updates the specific user by email. All fields aren't required to update the user object [TESTING PRIVATE SYNC]",
-        "deprecated": true,
-        "parameters": [
+    "/keep": {
+      "post": {
+        "x-amazon-apigateway-integration": {
+          "uri": "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:478910673833:function:37-rename-moat-to-wa-PromptDefender-Keep/invocations",
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "POST",
+          "type": "aws_proxy"
+        },
+        "summary": "Improve your prompts security with instruction defense",
+        "description": "This endpoint accepts a text prompt, strips PII, and checks it for prompt injection, returning an injection score.",
+        "operationId": "buildKeep",
+        "security": [
           {
-            "in": "query",
-            "name": "email",
-            "schema": {
-              "type": "string",
-              "enum": ["AKAMAI", "THIRD_PARTY"],
-              "example": "AKAMAI"
-            },
-            "required": true,
-            "description": "The email used to fetch the User to update"
+            "ApiKeyAuth": []
           }
         ],
         "requestBody": {
-          "description": "Updates a user object",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Update"
+                "$ref": "#/components/schemas/KeepRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Updated a user"
+            "description": "Successful operation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KeepResponse"
+                }
+              }
+            }
           },
-          "404": {
-            "description": "The User you are trying to update doesn't exist"
+          "400": {
+            "description": "Bad request. The prompt field is missing or invalid."
+          },
+          "500": {
+            "description": "Internal server error."
           }
         }
       }
     },
-    "/users/create": {
+    "/wall": {
       "post": {
+        "x-amazon-apigateway-integration": {
+          "uri": "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:478910673833:function:37-rename-moat-to-wa-PromptDefender-Wall/invocations",
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "POST",
+          "type": "aws_proxy"
+        },
+        "summary": "This endpoint accepts a text prompt, strips PII, and checks it for prompt injection, returning an injection score.",
+        "description": "Wall is an API that is called before every request to your API. It checks the request for PII and prompt injection, and returns a score indicating the likelihood of injection.",
+        "operationId": "buildShield",
         "security": [
           {
-            "TestAuth": []
+            "ApiKeyAuth": []
           }
         ],
-        "tags": ["Users"],
-        "summary": "Creates a User (ONE MORE TEST RESYNC TEST)",
-        "operationId": "createUser",
-        "description": "Creates a new user(TESTING RESYNC)",
         "requestBody": {
-          "description": "Creates a new user object(TICKET ENDPOINT)",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WallRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. The prompt field is missing or invalid."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/user/{userId}": {
+      "delete": {
+        "x-amazon-apigateway-integration": {
+          "uri": "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:478910673833:function:37-rename-moat-to-wa-PromptDefender-User/invocations",
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "POST",
+          "type": "aws_proxy"
+        },
+        "summary": "Remove Suspicious User",
+        "description": "This endpoint removes a user from the list of suspicious users.",
+        "operationId": "removeUser",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully removed."
+          },
+          "400": {
+            "description": "Bad request. The userId is missing or invalid."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      },
+      "get": {
+        "x-amazon-apigateway-integration": {
+          "uri": "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:478910673833:function:37-rename-moat-to-wa-PromptDefender-User/invocations",
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "POST",
+          "type": "aws_proxy"
+        },
+        "summary": "Get Suspicious User",
+        "description": "This endpoint returns a specific suspicious user.",
+        "operationId": "getUser",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/user": {
+      "get": {
+        "x-amazon-apigateway-integration": {
+          "uri": "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:478910673833:function:37-rename-moat-to-wa-PromptDefender-User/invocations",
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "POST",
+          "type": "aws_proxy"
+        },
+        "summary": "List Suspicious Users",
+        "description": "This endpoint returns a list of suspicious users.",
+        "operationId": "listUsers",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      },
+      "post": {
+        "x-amazon-apigateway-integration": {
+          "uri": "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:478910673833:function:37-rename-moat-to-wa-PromptDefender-User/invocations",
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "POST",
+          "type": "aws_proxy"
+        },
+        "summary": "Add Suspicious User",
+        "description": "This endpoint adds a user to the list of suspicious users.",
+        "operationId": "addUser",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
           "required": true,
           "content": {
             "application/json": {
@@ -107,85 +253,13 @@
         },
         "responses": {
           "201": {
-            "description": "User Created! (click to see more...)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
+            "description": "User successfully added."
           },
           "400": {
-            "description": "Error creating user password and email required"
-          }
-        }
-      }
-    },
-    "/users/{email}": {
-      "get": {
-        "tags": ["Users"],
-        "operationId": "quickTest",
-        "description": "Returns a user by a specific email",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "email",
-            "description": "The email that needs to be used to fetch. Use test2@gmail.com to test. ",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Testing something here lol",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Testing"
-                }
-              }
-            }
+            "description": "Bad request. The user data is missing or invalid."
           },
-          "404": {
-            "description": "User with that email does not exist"
-          }
-        }
-      }
-    },
-    "/users/delete/{email}": {
-      "delete": {
-        "tags": ["Users"],
-        "summary": "Deletes a user",
-        "operationId": "deleteUserByEmail",
-        "description": "Deletes a user by the specified email given",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "email",
-            "description": "The email that needs to be used to fetch and delete. Try hitting the end point that returns all users and pick an email to delete. ",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "name": "confidences",
-            "in": "query",
-            "description": "Include Confidence Scores in the PDF.",
-            "schema": {
-              "type": "boolean"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "This is where the description of your response will go and it will populate in the area marked in your first screenshot"
-          },
-          "400": {
-            "description": "User with that email does not exist"
+          "500": {
+            "description": "Internal server error."
           }
         }
       }
@@ -194,99 +268,98 @@
   "components": {
     "securitySchemes": {
       "ApiKeyAuth": {
+        "type": "apiKey",
         "in": "header",
-        "name": "The Name here",
-        "type": "apiKey"
-      },
-      "TestAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
+        "name": "x-api-key",
+        "description": "API key required for AWS API Gateway"
       }
     },
     "schemas": {
       "User": {
         "type": "object",
-        "required": ["email", "password"],
         "properties": {
-          "email": {
+          "userId": {
             "type": "string",
-            "description": "user's email"
-          },
-          "firstName": {
-            "type": "string",
-            "description": "Adding a description here will will have the description populate in the area marked in your second screenshot"
-          },
-          "lastName": {
-            "type": "string",
-            "description": "the user's last name"
-          },
-          "Testing": {
-            "type": "string",
-            "description": "Working?"
-          },
-          "password": {
-            "type": "string",
-            "format": "password",
-            "description": "user's password"
-          },
-          "date": {
-            "type": "string",
-            "description": "Date of Arrival",
-            "format": "date",
-            "example": {
-              "date": "2022-05-03"
-            }
+            "description": "The user ID of the suspicious user."
           }
         }
       },
-      "Testing": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Update"
-          },
-          {
-            "$ref": "#/components/schemas/Test"
-          }
-        ]
-      },
-      "Update": {
+      "KeepRequest": {
         "type": "object",
+        "required": ["prompt"],
         "properties": {
-          "firstName": {
-            "type": "string",
-            "description": "User's first name to update"
+          "randomise_xml_tag": {
+            "type": "boolean",
+            "description": "Whether to randomise the XML tag that is used to escape user input in your prompt."
           },
-          "lastName": {
+          "prompt": {
             "type": "string",
-            "description": "User's last name to update"
-          },
-          "password": {
-            "type": "string",
-            "description": "User's password to update"
+            "description": "The base prompt you want to build a keep for"
           }
         }
       },
-      "Test": {
+      "WallRequest": {
+        "type": "object",
+        "required": ["prompt", "scan_pii"],
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "The user ID of the user who is submitting the prompt. This is used to flag suspicious users"
+          },
+          "session_id": {
+            "type": "string",
+            "description": "The session ID of the user who is submitting the prompt. This is used to flag suspicious sessions"
+          },
+          "prompt": {
+            "type": "string",
+            "description": "The text prompt to be verified."
+          },
+          "scan_pii": {
+            "type": "boolean",
+            "description": "Whether to scan for PII in the prompt."
+          },
+          "xml_tag": {
+            "type": "string",
+            "description": "The XML tag that is used to escape user input in your prompt (this may have been generated with keep)."
+          }
+        }
+      },
+      "KeepResponse": {
+        "type": "object",
+        "required": ["shielded_prompt", "xml_tag"],
+        "properties": {
+          "shielded_prompt": {
+            "type": "string",
+            "description": "The shielded prompt."
+          },
+          "xml_tag": {
+            "type": "string",
+            "description": "The XML tag that is used to escape user input in your prompt."
+          }
+        }
+      },
+      "WallResponse": {
         "type": "object",
         "properties": {
-          "test1": {
-            "type": "string",
-            "description": "Testing allOf 1"
+          "contains_pii": {
+            "type": "boolean",
+            "description": "Whether the prompt contains PII."
           },
-          "test2": {
-            "type": "string",
-            "description": "Testing allOf 2"
+          "potential_jailbreak": {
+            "type": "boolean",
+            "description": "Whether the prompt contains a potential jailbreak."
           },
-          "test3": {
-            "type": "string",
-            "description": "Testing allOf 3"
+          "potential_xml_escaping": {
+            "type": "boolean",
+            "description": "Whether the prompt contains potential XML escaping."
           },
-          "link-test": {
-            "type": "string",
-            "example": {
-              "link": "https://www.google.com"
-            }
+          "suspicious_user": {
+            "type": "boolean",
+            "description": "Whether the user is suspicious."
+          },
+          "suspicious_session": {
+            "type": "boolean",
+            "description": "Whether the session is suspicious."
           }
         }
       }
@@ -294,8 +367,7 @@
   },
   "x-readme": {
     "explorer-enabled": true,
-    "samples-enabled": true,
     "proxy-enabled": true,
-    "samples-languages": ["node", "curl"]
+    "samples-enabled": true
   }
 }
