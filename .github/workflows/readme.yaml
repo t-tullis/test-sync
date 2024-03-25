@@ -17,7 +17,7 @@ jobs:
       - name: Creating Version
         uses: readmeio/rdme@8.6.6
         with:
-          rdme: rdme versions:create v14.0 --key=${{secrets.README_OAS_TEST}} --fork=v3.0 --main=false --beta=false --isPublic=true --deprecated=false
+          rdme: versions:create v14.0 --key=${{secrets.README_OAS_TEST}} --fork=v3.0 --main=false --beta=false --isPublic=true --deprecated=false
 
       # Run GitHub Action to sync OpenAPI file at [path-to-file.json]
       # - name: Checking OAS
