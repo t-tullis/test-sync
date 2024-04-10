@@ -1,9 +1,10 @@
 ---
 title: File 3
 excerpt: Update your docs automatically with `rdme`, ReadMe's official CLI and GitHub Action
-category: 65d520a9011b29007e3e076b
+category: 6543ec6f32ff1d000cd40972
+slug: testing/work
 ---
 
-# File 3
+# File update
 
-Changes
+Updating here
