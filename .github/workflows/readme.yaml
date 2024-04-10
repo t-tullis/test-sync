@@ -16,8 +16,8 @@ jobs:
 
       - name: Creating Version
         uses: readmeio/rdme@8.6.6
-        with:
-          rdme: versions:create v14.0 --key=${{secrets.README_OAS_TEST}} --fork=v3.0 --main=false --beta=false --isPublic=true --deprecated=false
+        # with:
+        #   rdme: versions:create v14.0 --key=${{secrets.README_OAS_TEST}} --fork=v3.0 --main=false --beta=false --isPublic=true --deprecated=false
 
       # Run GitHub Action to sync OpenAPI file at [path-to-file.json]
       # - name: Checking OAS
@@ -25,15 +25,15 @@ jobs:
       #    with:
       #    rdme: openapi:inspect ./swagger.json
 
-      - name: Syncing OAS
-        uses: readmeio/rdme@8.6.6
-        with:
-          rdme: openapi ./swagger.json --key=${{secrets.README_OAS_TEST}} --version=v14.0
-
-      # - name: Syncing Docs
-      #   uses: readmeio/rdme@7.2.0
+      # - name: Syncing OAS
+      #   uses: readmeio/rdme@8.6.6
       #   with:
-      #     rdme: docs ./documents --key=${{ secrets.README_OAS_TEST }} --version=1.0
+      #     rdme: openapi ./swagger.json --key=${{secrets.README_OAS_TEST}} --version=v14.0
+
+      - name: Syncing Docs
+        uses: readmeio/rdme@7.2.0
+        with:
+          rdme: docs ./documents --key=${{ secrets.README_OAS_TEST }} --version=1.0
 
       # - name: Syncing Changelog
       #   uses: readmeio/rdme@v8

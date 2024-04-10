@@ -1,11 +1,9 @@
 ---
 title: File 2
 excerpt: Update your docs automatically with `rdme`, ReadMe's official CLI and GitHub Action!
-category: 65d520a9011b29007e3e076b
+category: 6543ec6f32ff1d000cd40972
 ---
 
 # File 2
 
-This should work!
-
-<ReusableTest />
+<img src="https://raw.githubusercontent.com/t-tullis/test-sync/master/images/Screenshot%202023-08-28%20at%201.48.32%20PM.png>
