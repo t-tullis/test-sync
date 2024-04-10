@@ -1,10 +1,9 @@
 ---
 title: File 0
 excerpt: Update your docs automatically with `rdme`, ReadMe's official CLI and GitHub Action!
-category: 65d520a9011b29007e3e076b
+category: 6543ec6f32ff1d000cd40972
 metadata:
   {
-    "image": "https://files.readme.io/f772620-Pokemon.png",
     "title": "Testing Title again",
     "description": "Working update?",
     "keywords": "word1, word2, word3",
@@ -15,5 +14,7 @@ metadata:
 # File 0
 
 ## Is it syncing in order?
+
+<img href="https://UrlToImageHere.com />
 
 Testing --dryRun
