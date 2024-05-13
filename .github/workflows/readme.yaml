@@ -11,8 +11,8 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      # - name: Checkout this repo
-      #   uses: actions/checkout@v3
+      - name: Checkout this repo
+        uses: actions/checkout@v3
 
       # - name: Creating Version
       #   uses: readmeio/rdme@8.6.6
@@ -28,7 +28,7 @@ jobs:
       - name: Syncing OAS
         uses: readmeio/rdme@8.6.6
         with:
-          rdme: openapi swagger.json --key=${{secrets.README_OAS_TEST}} --version=v14.0
+          rdme: openapi ./swagger.json --key=${{secrets.README_OAS_TEST}} --version=v14.0
 
       # - name: Syncing Docs
       #   uses: readmeio/rdme@7.2.0
