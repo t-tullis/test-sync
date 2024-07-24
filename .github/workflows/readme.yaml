@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-      - master
 
 jobs:
   sync:
@@ -23,7 +22,7 @@ jobs:
       # - name: Checking OAS
       #    uses: readmeio/rdme@v8
       #    with:
-      #    rdme: openapi:inspect ./swagger.jsonaa
+      #    rdme: openapi:inspect ./swagger.json
 
       - name: Syncing OAS
         uses: readmeio/rdme@8.6.6
