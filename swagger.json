@@ -2438,7 +2438,7 @@
           },
           "assert": {
             "type": "string",
-            "const": "eventNotExists"
+            "const": "eventNotExists1"
           },
           "assertion": {
             "type": "string",
@@ -2450,19 +2450,6 @@
           }
         },
         "required": ["year", "expectedValue", "assert", "assertion"]
-      },
-      "NationalDiocesanWiderRegionCalendar": {
-        "oneOf": [
-          {
-            "$ref": "https://litcal.johnromanodorazio.com/api/dev/schemas/?schema=NationalCalendar.json#/definitions/NationalCalendar"
-          },
-          {
-            "$ref": "https://litcal.johnromanodorazio.com/api/dev/schemas/?schema=DiocesanCalendar.json#/definitions/DiocesanCalendar"
-          },
-          {
-            "$ref": "https://litcal.johnromanodorazio.com/api/dev/schemas/?schema=WiderRegionCalendar.json#/definitions/WiderRegionCalendar"
-          }
-        ]
       }
     },
     "examples": {
