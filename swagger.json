@@ -237,14 +237,6 @@
   },
   "x-readme": {
     "proxy-enabled": false,
-    "samples-languages": [
-      "curl",
-      "node",
-      "ruby",
-      "javascript",
-      "python",
-      "php",
-      "swift"
-    ]
+    "samples-languages": ["curl", "javascript"]
   }
 }
