@@ -1,242 +1,580 @@
 {
-  "openapi": "3.0.0",
+  "openapi": "3.0.3",
   "info": {
-    "version": "1.0",
-    "title": "test",
-    "license": {
-      "name": "ISC"
-    },
-    "description": "Lets see what appears? is anything changing?"
+    "title": "Parsable Public API",
+    "contact": {},
+    "version": "3.0.0"
   },
   "servers": [
     {
-      "description": "Development Environment",
-      "url": "https://testing.dev"
+      "url": "https://api.us-1.parsable.io/v3",
+      "description": "US region"
     },
     {
-      "description": "Production Environment",
-      "url": "https://testing.com"
+      "url": "https://api.eu-1.parsable.io/v3",
+      "description": "EU region"
     }
   ],
-  "security": [
+  "tags": [
     {
-      "Oauth": ["write:pets", "read:pets"]
+      "name": "Step Input Fields",
+      "description": "Endpoints for entering and updating data in step input fields. Step input fields are the input fields that users interact with while executing a job. Fields may also be marked as N/A (Not Applicable) if they are not relevant to the current job.\n"
     }
   ],
   "paths": {
-    "/users": {
-      "get": {
-        "summary": "Retrieves All Users(Moving content test)",
-        "operationId": "getAllUsers",
-        "description": "Collects all users ",
-        "responses": {
-          "200": {
-            "description": "All good! Users will be displayed here"
-          }
-        }
-      }
-    },
-    "/users/update/{email}": {
-      "put": {
-        "operationId": "updateUser",
-        "description": "Updates the specific user by email. All fields aren't required to update the user object \n > 📘 v3 Endpoints are also available \n > \n> You can visit v3 here: https://linkTov3EndpointHere.com",
+    "/jobs/{jobId}/procedures/{procedureId}/steps/{stepId}/input-fields/{fieldId}": {
+      "patch": {
+        "tags": ["Step Input Fields"],
+        "summary": "Add data to a field on a step",
+        "description": "Update the data for a specific input field on a step within a job's procedure.",
         "parameters": [
           {
-            "in": "path",
-            "name": "email",
-            "schema": {
-              "type": "string"
-            },
-            "required": true,
-            "description": "The email used to fetch the User to update"
+            "$ref": "#/components/parameters/path.jobId"
           },
           {
-            "in": "query",
-            "name": "limit",
-            "schema": {
-              "type": "integer"
-            },
-            "example": 50
+            "$ref": "#/components/parameters/path.procedureId"
+          },
+          {
+            "$ref": "#/components/parameters/path.stepId"
+          },
+          {
+            "$ref": "#/components/parameters/path.fieldId"
           }
         ],
         "requestBody": {
-          "description": "Updates a user object",
+          "description": "Request Body",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Update"
+                "$ref": "#/components/schemas/dtoInputFieldUpdateRequest"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Updated a user"
+          "204": {
+            "description": "Created Field Data Response"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/httpErrorResponseBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/httpErrorResponseBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/httpErrorResponseBody"
+                }
+              }
+            }
           },
           "404": {
-            "description": "The User you are trying to update doesn't exist"
-          }
-        }
-      }
-    },
-    "/users/create": {
-      "post": {
-        "summary": "Creates a User  \n also an update for version 1.0.2",
-        "operationId": "createUser",
-        "description": "Creates a new user",
-        "requestBody": {
-          "description": "Creates a new user object ",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/httpErrorResponseBody"
+                }
               }
             }
           }
         },
-        "responses": {
-          "201": {
-            "description": "User Created"
-          },
-          "400": {
-            "description": "Error creating user password and email required"
-          }
-        }
-      }
-    },
-    "/users/{email}": {
-      "get": {
-        "summary": "Returns a user with a specific email",
-        "operationId": "GetUserByEmail",
-        "description": "Returns a user by a specific email",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "email",
-            "description": "The email that needs to be used to fetch. Use test2@gmail.com to test. ",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User found"
-          },
-          "404": {
-            "description": "User with that email does not exist"
-          }
-        }
-      }
-    },
-    "/users/delete/{email}": {
-      "delete": {
-        "summary": "Deletes a user",
-        "operationId": "deleteUserByEmail",
-        "description": "Deletes a user by the specified email given",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "email",
-            "description": "The email that needs to be used to fetch and delete. Try hitting the end point that returns all users and pick an email to delete. ",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User was deleted"
-          },
-          "400": {
-            "description": "User with that email does not exist"
-          }
-        }
+        "operationId": "add-data-to-a-field-on-a-step"
       }
     }
   },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
   "components": {
     "securitySchemes": {
-      "ApiKeyAuth": {
-        "type": "apiKey",
-        "in": "header",
-        "name": "Bearer"
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "parameters": {
+      "path.jobId": {
+        "name": "jobId",
+        "in": "path",
+        "description": "Job ID",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
       },
-      "Oauth": {
-        "type": "oauth2",
-        "flows": {
-          "implicit": {
-            "authorizationUrl": "https://example.com/api/oauth/dialog",
-            "scopes": {
-              "write:pets": "modify pets in your account",
-              "read:pets": "read your pets"
-            }
-          },
-          "authorizationCode": {
-            "authorizationUrl": "https://example.com/api/oauth/dialog",
-            "tokenUrl": "https://example.com/api/oauth/token",
-            "scopes": {
-              "write:pets": "modify pets in your account",
-              "read:pets": "read your pets"
-            }
-          }
+      "path.procedureId": {
+        "name": "procedureId",
+        "in": "path",
+        "description": "Job Procedure ID",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "path.stepId": {
+        "name": "stepId",
+        "in": "path",
+        "description": "Procedure Step ID",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "path.fieldId": {
+        "name": "fieldId",
+        "in": "path",
+        "description": "Procedure Step Input Field ID",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
         }
       }
     },
     "schemas": {
-      "User": {
+      "httpErrorResponseBody": {
+        "required": ["errorCode", "message", "requestId"],
         "type": "object",
-        "required": ["email", "password"],
+        "additionalProperties": false,
         "properties": {
-          "email": {
-            "type": "string",
-            "description": "user's email"
+          "correlationId": {
+            "type": "string"
           },
-          "firstName": {
-            "type": "string",
-            "description": "user's first name"
+          "detail": {
+            "type": "string"
           },
-          "lastName": {
-            "type": "string",
-            "description": "user'saq last name"
+          "errorCode": {
+            "type": "string"
           },
-          "password": {
-            "type": "string",
-            "format": "password",
-            "description": "user's password"
+          "message": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string"
           }
         }
       },
-      "Update": {
+      "NumberData": {
         "type": "object",
         "properties": {
-          "firstName": {
-            "type": "string",
-            "description": "User's first name to update"
+          "value": {
+            "type": "object",
+            "properties": {
+              "number": {
+                "type": "number"
+              },
+              "precision": {
+                "type": "integer"
+              },
+              "unitId": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "required": ["number"]
           },
-          "lastName": {
+          "type": {
             "type": "string",
-            "description": "User's last name to update"
+            "enum": ["number"]
+          }
+        },
+        "example": {
+          "value": {
+            "number": 123.45,
+            "precision": 2,
+            "unitId": "123e4567-e89b-12d3-a456-426614174000"
           },
-          "password": {
+          "type": "number"
+        },
+        "required": ["value", "type"]
+      },
+      "TextData": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "type": {
             "type": "string",
-            "description": "User's password to update"
+            "enum": ["text"]
+          }
+        },
+        "example": {
+          "value": "Some text",
+          "type": "text"
+        },
+        "required": ["value", "type"]
+      },
+      "YesNoData": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "boolean"
           },
-          "arrayOfStrings": {
+          "type": {
+            "type": "string",
+            "enum": ["yes-no"]
+          }
+        },
+        "example": {
+          "value": true,
+          "type": "yes-no"
+        },
+        "required": ["value", "type"]
+      },
+      "ListData": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["list"]
+          }
+        },
+        "example": {
+          "value": "Some list item",
+          "type": "list"
+        },
+        "required": ["value", "type"]
+      },
+      "MultiSelectListData": {
+        "type": "object",
+        "properties": {
+          "value": {
             "type": "array",
             "items": {
               "type": "string"
             }
+          },
+          "type": {
+            "type": "string",
+            "enum": ["multi-select-list"]
+          }
+        },
+        "example": {
+          "value": ["Some selected list item", "Another selected list item"],
+          "type": "multi-select-list"
+        },
+        "required": ["value", "type"]
+      },
+      "dtoDocumentRef": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "documentId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": ["documentId"]
+      },
+      "PhotosData": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/dtoDocumentRef"
+            },
+            "minItems": 1
+          },
+          "type": {
+            "type": "string",
+            "enum": ["photos"]
+          }
+        },
+        "example": {
+          "value": [
+            {
+              "documentId": "123e4567-e89b-12d3-a456-426614174000"
+            }
+          ],
+          "type": "photos"
+        },
+        "required": ["value", "type"]
+      },
+      "DateData": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["date"]
+          }
+        },
+        "example": {
+          "value": "2020-01-01T00:00:00Z",
+          "type": "date"
+        },
+        "required": ["value", "type"]
+      },
+      "DateTimeData": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["date-time"]
+          }
+        },
+        "example": {
+          "value": "2023-11-06T12:35:23Z",
+          "type": "date-time"
+        },
+        "required": ["value", "type"]
+      },
+      "SignatureData": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/dtoDocumentRef"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["signature"]
+          }
+        },
+        "example": {
+          "value": {
+            "documentId": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "type": "signature"
+        },
+        "required": ["value", "type"]
+      },
+      "FileData": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/dtoDocumentRef"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["file"]
+          }
+        },
+        "example": {
+          "value": {
+            "documentId": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "type": "file"
+        },
+        "required": ["value", "type"]
+      },
+      "VideoData": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/dtoDocumentRef"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["video"]
+          }
+        },
+        "example": {
+          "value": {
+            "documentId": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "type": "video"
+        },
+        "required": ["value", "type"]
+      },
+      "AudioData": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/dtoDocumentRef"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["audio"]
+          }
+        },
+        "example": {
+          "value": {
+            "documentId": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "type": "audio"
+        },
+        "required": ["value", "type"]
+      },
+      "LinkData": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "uri"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["link"]
+          }
+        },
+        "example": {
+          "value": "https://example.com",
+          "type": "link"
+        },
+        "required": ["value", "type"]
+      },
+      "DynamicListData": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "level": {
+                  "type": "integer"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "header": {
+                  "type": "string"
+                }
+              },
+              "required": ["level", "value", "header"]
+            }
+          },
+          "type": {
+            "type": "string",
+            "enum": ["dynamic-list"]
+          }
+        },
+        "example": {
+          "value": [
+            {
+              "level": 1,
+              "value": "Some dynamic list item",
+              "header": "Some dynamic list header"
+            }
+          ],
+          "type": "dynamic-list"
+        },
+        "required": ["value", "type"]
+      },
+      "NullData": {
+        "type": "object",
+        "additionalProperties": false,
+        "nullable": true,
+        "description": "Set data to null to clear the field"
+      },
+      "dtoFieldData": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/NumberData"
+          },
+          {
+            "$ref": "#/components/schemas/TextData"
+          },
+          {
+            "$ref": "#/components/schemas/YesNoData"
+          },
+          {
+            "$ref": "#/components/schemas/ListData"
+          },
+          {
+            "$ref": "#/components/schemas/MultiSelectListData"
+          },
+          {
+            "$ref": "#/components/schemas/PhotosData"
+          },
+          {
+            "$ref": "#/components/schemas/DateData"
+          },
+          {
+            "$ref": "#/components/schemas/DateTimeData"
+          },
+          {
+            "$ref": "#/components/schemas/SignatureData"
+          },
+          {
+            "$ref": "#/components/schemas/FileData"
+          },
+          {
+            "$ref": "#/components/schemas/VideoData"
+          },
+          {
+            "$ref": "#/components/schemas/AudioData"
+          },
+          {
+            "$ref": "#/components/schemas/LinkData"
+          },
+          {
+            "$ref": "#/components/schemas/DynamicListData"
+          },
+          {
+            "$ref": "#/components/schemas/NullData"
+          }
+        ]
+      },
+      "dtoInputFieldUpdateRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["data"],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/dtoFieldData"
+          },
+          "updated": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "clientTime": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "example": {
+          "data": {
+            "value": "Some text",
+            "type": "text"
+          },
+          "updated": {
+            "clientTime": "2020-01-01T00:00:00Z"
           }
         }
       }
     }
   },
   "x-readme": {
-    "proxy-enabled": false,
-    "samples-languages": ["curl", "javascript"]
+    "explorer-enabled": true,
+    "proxy-enabled": true
   }
 }

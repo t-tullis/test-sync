@@ -27,10 +27,10 @@ jobs:
       #    rdme: openapi:inspect ./swagger.json
 
       - name: Syncing OAS
-        # uses: readmeio/rdme@v8
-        # with:
-        #   rdme: openapi ./swagger.json --key="${{ secrets.README_OAS_TEST }}"  --id=66e84fb55e03fc00127d7fce
-        run: npx -p rdme@v8 rdme openapi ./swagger.json --key="${{ secrets.README_OAS_TEST }}"  --id=66e84fb55e03fc00127d7fce
+        uses: readmeio/rdme@v8
+        with:
+          rdme: openapi ./swagger.json --key="${{ secrets.README_OAS_TEST }}"  --id=66e84fb55e03fc00127d7fce
+
       # - name: Syncing Docs
       #   uses: readmeio/rdme@7.2.0
       #   with:
