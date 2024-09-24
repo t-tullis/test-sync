@@ -216,16 +216,14 @@
         "type": "object",
         "properties": {
           "value": {
-            "type": "string"
+            "type": "string",
+            "example": "Some Text"
           },
           "type": {
             "type": "string",
-            "enum": ["text"]
+            "enum": ["text"],
+            "example": "text"
           }
-        },
-        "example": {
-          "value": "Some text",
-          "type": "text"
         },
         "required": ["value", "type"]
       },
