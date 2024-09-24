@@ -534,9 +534,6 @@
           },
           {
             "$ref": "#/components/schemas/DynamicListData"
-          },
-          {
-            "$ref": "#/components/schemas/NullData"
           }
         ]
       },
