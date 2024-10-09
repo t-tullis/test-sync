@@ -14759,7 +14759,7 @@
     },
     "/v3/user_job_permissions": {
       "get": {
-        "summary": "UserJobPermissions list",
+        "summary": "UserJobPermissions list [Testing for duplicates]",
         "tags": ["UserJobPermissions"],
         "parameters": [
           {
