@@ -34,7 +34,7 @@
       "post": {
         "tags": ["testing"],
         "operationId": "createUser",
-        "description": "Creates a new user",
+        "description": "Creates a new user!",
         "requestBody": {
           "description": "> 📘 \n> \n> See [URL identifiers](ref:url#url-identifiers) from more information about how to generate a valid URL identifier for a URL.\n\n URL objects have number of relationships to other URLs and objects. As mentioned in the [Relationships](ref:relationships) section, those related objects can be retrieved by sending `GET` requests to the relationship URL. \n\n Some relationships are accessible only to users who have access to VirusTotal Enterprise package.\n\n The relationships supported by URL objects are documented in the [URL](ref:private-urls) API object page.",
           "required": true,
