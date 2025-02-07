@@ -23,6 +23,79 @@
     }
   ],
   "paths": {
+    "/users": {
+      "get": {
+        "summary": "Retrieves All Users(TESTING SYNC)",
+        "operationId": "testingSlugChange",
+        "description": "\n\n| Type | Reason | Card Number (PAN) | Card Object Status |\n| ---- | ------ | ----------------- | ------------------ |\n| Digital | Fraud, Lost, Stolen | New | `status=Verified` |\n| Digital | Renewal | Same, with new expiration date and CVV2 | `status=Verified` |\n| Digital + physical | Physical damage | Same | `status=Verified` unless program requires verification for reissues then `status=DigitalActivePhysicalPending` |\n| Digital + physical | Fraud, Lost, Stolen | New | `status=DigitalActivePhysicalPending` |\n| Digital + physical | Renewal | Same, with new expiration | `status=ReissuePendingVerification` |\n| Physical | Physical Damage | Same | `status=Verified` unless program requires verification for reissues then `status=PendingVerification` |\n| Physical | Fraud, Lost, Stolen | New | `status=PendingVerification` |\n| Physical | Renewal | Same, with new expiration date and CVV2 | `status=ReissuePendingVerification` |\n",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "settings": {
+                    "description": "Updates the settings of an app.",
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "examples": {
+                  "example 1": {
+                    "value": {
+                      "testing": "test 1",
+                      "testing-1": "test 2",
+                      "testing-2": "test 3",
+                      "testing-3": "test 4"
+                    }
+                  },
+                  "example 2": {
+                    "value": {
+                      "testing": "test 1",
+                      "testing-1": "test 2",
+                      "testing-2": "test 3",
+                      "testing-3": "test 4"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "x-readme": {
+          "code-samples": [
+            {
+              "language": "curl",
+              "code": "curl -X POST https://api.example.com/v2/alert",
+              "name": "Custom cURL snippet",
+              "install": "brew install curl"
+            },
+            {
+              "language": "php",
+              "code": "<?php echo \"This is our custom PHP code snippet.\"; ?>",
+              "name": "Custom PHP snippet"
+            }
+          ]
+        }
+      }
+    },
     "/users/update/": {
       "put": {
         "tags": [],
