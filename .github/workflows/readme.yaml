@@ -29,7 +29,7 @@ jobs:
       - name: Syncing Docs
         uses: readmeio/rdme@v9
         with:
-          rdme: openapi docs documents/file5.md documents/file2.md --key=${{ secrets.README_OAS_TEST }} --version=1.0
+          rdme: docs --key=${{ secrets.README_OAS_TEST }} --version=1.0
 
       # - name: Updating OAS
       #   uses: readmeio/rdme@v10
