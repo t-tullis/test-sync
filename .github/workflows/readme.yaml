@@ -27,7 +27,7 @@ jobs:
       #    rdme: openapi:inspect ./swagger.json
 
       - name: Syncing Docs
-        uses: readmeio/rdme@9
+        uses: readmeio/rdme@v9
         with:
           rdme: openapi docs ./documents  --key=${{ secrets.README_OAS_TEST }} --version=3.0
 
