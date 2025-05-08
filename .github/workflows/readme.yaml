@@ -34,4 +34,4 @@ jobs:
       - name: Updating OAS
         uses: readmeio/rdme@v9
         with:
-          rdme: openapi ./soldo-bapi-v2_4.24.0-SNAPSHOT.json  --key=${{ secrets.README_OAS_TEST }} --version=5.0
+          rdme: openapi ./soldo-bapi-v2_4.24.0-SNAPSHOT.json  --key=${{ secrets.README_OAS_TEST }} --version=5.0 --create
