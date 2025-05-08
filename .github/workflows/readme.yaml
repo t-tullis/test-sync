@@ -26,12 +26,12 @@ jobs:
       #    with:
       #    rdme: openapi:inspect ./swagger.json
 
-      - name: Syncing Docs
-        uses: readmeio/rdme@v8
-        with:
-          rdme: docs documents --key=${{ secrets.README_OAS_TEST }} --version=1.0
-
-      # - name: Updating OAS
-      #   uses: readmeio/rdme@v10
+      # - name: Syncing Docs
+      #   uses: readmeio/rdme@v8
       #   with:
-      #     rdme: openapi upload ./swagger2.json --key=${{ secrets.README_OAS_TEST }} --version=3.0 --slug=.swagger.json
+      #     rdme: docs documents --key=${{ secrets.README_OAS_TEST }} --version=1.0
+
+      - name: Updating OAS
+        uses: readmeio/rdme@v9
+        with:
+          rdme: openapi ./soldo-bapi-v2_4.24.0-SNAPSHOT.json  --key=${{ secrets.README_OAS_TEST }} --version=5.0
