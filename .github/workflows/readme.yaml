@@ -38,4 +38,4 @@ jobs:
       - name: Updating OAS
         uses: readmeio/rdme@v10
         with:
-          rdme: openapi upload ./my-test.json  --key=${{ secrets.README_OAS_TEST }} --version=1.0 -create
+          rdme: openapi upload ./my-test.json  --key=${{ secrets.README_OAS_TEST2 }} --version=1.0 -create
