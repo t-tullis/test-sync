@@ -31,11 +31,12 @@ jobs:
       #   with:
       #     rdme: docs documents --key=${{ secrets.README_OAS_TEST }} --version=1.0
 
-      - name: Updating OAS
+      - name: Sync to superhub-testing-proj
         uses: readmeio/rdme@v10
         with:
-          rdme: openapi upload ./my-test.json --key=${{ secrets.README_OAS_TEST }} --version=5.0 --create
-      - name: Updating OAS
+          rdme: openapi upload ./my-test.json --key=${{ secrets.README_OAS_TEST }} --branch=5.0
+
+      - name: Sync to myproducttest
         uses: readmeio/rdme@v10
         with:
-          rdme: openapi upload ./my-test.json  --key=${{ secrets.README_OAS_TEST2 }} --version=1.0 -create
+          rdme: openapi upload ./my-test.json  --key=${{ secrets.README_OAS_TEST2 }} --branch=1.0
