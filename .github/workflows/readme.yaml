@@ -34,9 +34,9 @@ jobs:
       - name: Sync to superhub-testing-proj
         uses: readmeio/rdme@v10
         with:
-          rdme: openapi upload ./my-test.json --key=${{ secrets.README_OAS_TEST }}
+          rdme: openapi upload ./my-test.json --key=${{ secrets.README_OAS_TEST }} --branch=6.0
 
-      - name: Sync to myproducttest
-        uses: readmeio/rdme@v10
-        with:
-          rdme: openapi upload ./my-test.json  --key=${{ secrets.README_OAS_TEST2 }}
+      # - name: Sync to myproducttest
+      #   uses: readmeio/rdme@v10
+      #   with:
+      #     rdme: openapi upload ./my-test.json  --key=${{ secrets.README_OAS_TEST2 }}
