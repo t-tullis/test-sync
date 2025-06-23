@@ -38,7 +38,7 @@
   "paths": {
     "/users": {
       "get": {
-        "summary": "Retrieves All Users",
+        "summary": "Retrieves All Users (GitHub Change)",
         "tags": ["testing"],
         "operationId": "testingSlugChange",
         "description": "\n\n| Type | Reason | Card Number (PAN) | Card Object Status |\n| ---- | ------ | ----------------- | ------------------ |\n| Digital | Fraud, Lost, Stolen | New | `status=Verified` |\n| Digital | Renewal | Same, with new expiration date and CVV2 | `status=Verified` |\n| Digital + physical | Physical damage | Same | `status=Verified` unless program requires verification for reissues then `status=DigitalActivePhysicalPending` |\n| Digital + physical | Fraud, Lost, Stolen | New | `status=DigitalActivePhysicalPending` |\n| Digital + physical | Renewal | Same, with new expiration | `status=ReissuePendingVerification` |\n| Physical | Physical Damage | Same | `status=Verified` unless program requires verification for reissues then `status=PendingVerification` |\n| Physical | Fraud, Lost, Stolen | New | `status=PendingVerification` |\n| Physical | Renewal | Same, with new expiration date and CVV2 | `status=ReissuePendingVerification` |\n",
