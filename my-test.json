@@ -96,7 +96,7 @@
     "/healthcheck": {
       "get": {
         "tags": ["HealthCheck"],
-        "summary": "HealthCheck(TESTING Legacy proj)",
+        "summary": "HealthCheck(Quick change)",
         "description": "指定されたモードによって、RDSアクセスまたはRDSアクセスを行わないHealthCheckを行う",
         "parameters": [
           {
