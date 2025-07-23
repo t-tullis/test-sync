@@ -32,9 +32,9 @@ jobs:
       #     rdme: docs documents --key=${{ secrets.README_OAS_TEST }} --version=1.0
 
       - name: Sync to trainingproj2024
-        uses: readmeio/rdme@v9
+        uses: readmeio/rdme@v10.4.0
         with:
-          rdme: openapi ./my-test.json --key=${{ secrets.README_OAS_TEST }} --id=${{secrets.API_DEFINITION_ID}} --version=v5.0
+          rdme: openapi upload --branch=2.0 ./my-test.json --key=${{ secrets.README_OAS_TEST }}
 
       # - name: Sync to myproducttest
       #   uses: readmeio/rdme@v10
