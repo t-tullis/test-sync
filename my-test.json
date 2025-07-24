@@ -1,451 +1,3051 @@
 {
-  "openapi": "3.0.0",
+  "openapi": "3.1.0",
   "info": {
-    "version": "1.0",
-    "title": "Test V3 Sync To Multiple Versions",
-    "license": {
-      "name": "ISC"
-    },
-    "description": "Lets see what appears? is anything changing?"
+    "description": "Payment Processor Server API Specification for PPRO Client",
+    "title": "PPRO Launchpad",
+    "version": "v1"
   },
   "servers": [
     {
-      "url": "testserver1.com"
+      "description": "Sandbox Endpoint",
+      "url": "https://api.sandbox.processor.propay.com"
     },
     {
-      "url": "testserver2.com"
-    }
-  ],
-  "tags": [
-    {
-      "name": "testing",
-      "description": "This is a test description with a glossary term: <<glossary:test>>"
-    },
-    {
-      "name": "testing tag 2",
-      "description": "another test tag"
-    }
-  ],
-  "security": [
-    {
-      "testQuery": []
+      "description": "Production Endpoint",
+      "url": "https://api.processor.propay.com"
     }
   ],
   "paths": {
-    "/users": {
-      "get": {
-        "summary": "Retrieves All Users(CLI Update working?)",
-        "tags": ["testing"],
-        "operationId": "testingSlugChange",
-        "description": "\n\n| Type | Reason | Card Number (PAN) | Card Object Status |\n| ---- | ------ | ----------------- | ------------------ |\n| Digital | Fraud, Lost, Stolen | New | `status=Verified` |\n| Digital | Renewal | Same, with new expiration date and CVV2 | `status=Verified` |\n| Digital + physical | Physical damage | Same | `status=Verified` unless program requires verification for reissues then `status=DigitalActivePhysicalPending` |\n| Digital + physical | Fraud, Lost, Stolen | New | `status=DigitalActivePhysicalPending` |\n| Digital + physical | Renewal | Same, with new expiration | `status=ReissuePendingVerification` |\n| Physical | Physical Damage | Same | `status=Verified` unless program requires verification for reissues then `status=PendingVerification` |\n| Physical | Fraud, Lost, Stolen | New | `status=PendingVerification` |\n| Physical | Renewal | Same, with new expiration date and CVV2 | `status=ReissuePendingVerification` |\n",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "settings": {
-                    "description": "Updates the settings of an app.",
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "boolean"
-                    }
-                  }
-                },
-                "type": "object"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                },
-                "examples": {
-                  "example 1": {
-                    "value": {
-                      "testing": "test 1",
-                      "testing-1": "test 2",
-                      "testing-2": "test 3",
-                      "testing-3": "test 4"
-                    }
-                  },
-                  "example 2": {
-                    "value": {
-                      "testing": "test 1",
-                      "testing-1": "test 2",
-                      "testing-2": "test 3",
-                      "testing-3": "test 4"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        },
-        "x-readme": {
-          "explorer-enabled": false
-        }
-      }
-    },
-    "/users/update/": {
+    "/v1/refunds/{refundReference}": {
       "put": {
-        "tags": [],
-        "description": "\n\n> 📘 Registering Proxy Contracts\n> \n> When registering a proxy contract address, you must supply the ABI of the implementation contract if you wish to call the implementation contract's methods.",
+        "description": "Confirm if the refund has been successful or not",
+        "operationId": "confirm",
         "parameters": [
           {
+            "description": "Authorization Token",
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+            "explode": false,
             "in": "header",
-            "name": "test",
+            "name": "Authorization",
+            "required": true,
             "schema": {
-              "type": "object",
-              "additionalProperties": true
-            }
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Provider refund reference",
+            "example": "f4c94dc6-fab4-4e16-92ea-702d3895dbe1",
+            "explode": false,
+            "in": "path",
+            "name": "refundReference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Unique request reference to facilitate tracing & debugging",
+            "example": "abc-unique-value-for-tracing",
+            "explode": false,
+            "in": "header",
+            "name": "Request-Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
           }
         ],
         "requestBody": {
-          "description": "Updates a user object",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Testing"
+                "$ref": "#/components/schemas/ProcessorRefundConfirmationRequest"
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "200": {
-            "description": "Glossary test: <<glossary:testing>>"
-          },
-          "404": {
-            "description": "The User you are trying to update doesn't exist"
-          }
-        },
-        "x-readme": {
-          "proxy-enabled": false
-        }
-      }
-    },
-    "/users/create/{version}?": {
-      "post": {
-        "tags": ["Users"],
-        "summary": "Creates a User(MOVED TO A NEW CAT ANOTHER TEST)",
-        "operationId": "createUser",
-        "description": "Creates a new user(TESTING RESYNC)",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "version",
-            "schema": {
-              "type": "string",
-              "default": "Testing"
-            },
-            "required": true
-          },
-          {
-            "in": "header",
-            "name": "testing",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "x-orgid",
-            "schema": {
-              "type": "string"
-            },
-            "allowReserved": true,
-            "required": true,
-            "description": "The email used to fetch the User to update"
-          }
-        ],
-        "requestBody": {
-          "description": "Creates a new user object(TICKET ENDPOINT)",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              },
-              "examples": {
-                "Test Example": {
-                  "value": {
-                    "from": "20171011",
-                    "to": "20171130",
-                    "daily": false,
-                    "channel": ["InApp"],
-                    "delivery": ["inaction", "action"],
-                    "status": ["completed"],
-                    "message_type": ["single"],
-                    "label": []
-                  }
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorRefundConfirmationResponse"
                 }
               }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "User Created! (click to see more...)",
+            },
+            "description": "OK"
+          },
+          "400": {
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/Update"
-                    },
-                    {
-                      "$ref": "#/components/schemas/Test"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Error creating user password and email required"
-          }
-        }
-      }
-    },
-    "/users/{email}": {
-      "get": {
-        "tags": ["Users"],
-        "operationId": "Test-slug",
-        "description": "Returns a user by a specific email",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "email",
-            "description": "The email that needs to be used to fetch. Use test2@gmail.com to test. ",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "requestBody": {
-          "description": "TESTING SOMETHING",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "other_rows_ids_map": {
-                    "type": "array",
-                    "additionalProperties": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Testing something here lol",
-            "content": {
-              "text/xml": {
-                "schema": {
-                  "type": "string"
+                "example": {
+                  "failureCode": "INVALID_AMOUNT",
+                  "failureType": "INTERNAL_DECLINE",
+                  "failureMessage": "Invalid transaction amount!"
                 },
-                "example": "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<response type=\"AddUser\" status=\"SUCCESS\" id=\"170e2c21-7275-4297-af24-9cd7b64f9c33\">\n    <request>\n        <param name=\"country\" value=\"124\"/>\n        <param name=\"firstname\" value=\"Test\"/>\n        <param name=\"address-state\" value=\"AB\"/>\n        <param name=\"initials\" value=\"I\"/>\n        <param name=\"active\" value=\"yes\"/>\n        <param name=\"address-country\" value=\"Canada\"/>\n        <param name=\"lastname\" value=\"User\"/>\n        <param name=\"address-postcode\" value=\"T3T3T3\"/>\n        <param name=\"hmac\" value=\"Y6Fet6+fWdCOh5KdvGJyL+FTyb0=\"/>\n        <param name=\"address-city\" value=\"Calgary\"/>\n        <param name=\"address-street\" value=\"611 Meredith Rd\"/>\n        <param name=\"user\" value=\"TestUser\"/>\n        <param name=\"email\" value=\"clesperance@benevity.com\"/>\n    </request>\n    <messages/>\n    <content type=\"text/xml; charset=utf-8\">\n        <user id=\"GDRBKXUWSA\"/>\n    </content>\n</response>"
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorFailureResponse"
+                }
               }
-            }
+            },
+            "description": "Bad request"
           },
-          "404": {
-            "description": "User with that email does not exist"
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "failureCode": "PROVIDER_PROCESSING_ERROR",
+                  "failureType": "PROVIDER_ERROR",
+                  "failureMessage": "The provider encountered an error while processing the transaction",
+                  "providerFailureCode": "provider_failure_code"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorFailureResponse"
+                }
+              }
+            },
+            "description": "Error occurred while processing the request"
           }
-        }
+        },
+        "summary": "Confirm Refund",
+        "tags": ["Refund"]
       }
     },
-    "/users/delete/{email}": {
-      "delete": {
-        "tags": ["Users"],
-        "summary": "Deletes a user",
-        "operationId": "deleteUserByEmail",
-        "description": "A variable link test here: [testing]('<<testing>>') ",
+    "/v1/authorizations/{authorizationReference}": {
+      "put": {
+        "description": "Confirm if the authorization has been successful or not",
+        "operationId": "confirm_1",
         "parameters": [
           {
-            "in": "path",
-            "name": "email",
-            "description": "The email that needs to be used to fetch and delete. Try hitting the end point that returns all users and pick an email to delete. ",
+            "description": "Authorization Token",
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+            "explode": false,
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
             "schema": {
               "type": "string"
             },
-            "required": true
+            "style": "simple"
           },
           {
-            "name": "confidences",
-            "in": "query",
-            "description": "Include Confidence Scores in the PDF.",
+            "description": "Provider authorization reference",
+            "example": "eb1a2082-2bf7-46de-937a-44072ac4fe5f",
+            "explode": false,
+            "in": "path",
+            "name": "authorizationReference",
+            "required": true,
             "schema": {
-              "type": "boolean"
-            }
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Unique request reference to facilitate tracing & debugging",
+            "example": "abc-unique-value-for-tracing",
+            "explode": false,
+            "in": "header",
+            "name": "Request-Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
           }
         ],
         "requestBody": {
-          "description": "JSON payload containing the delete request",
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "reason": {
-                    "type": "string",
-                    "example": 1,
-                    "description": "<span style=\"color:#eab676\">The reason code for deleting the load.</span><br/><a href=\"https://truckstop.readme.io/reference/load-state-reason-codes\">Reason Codes</a>"
-                  },
-                  "comment": {
-                    "type": "string",
-                    "description": "<span style=\"color:#eab676\">String comment of the delete reason.</span>"
-                  }
-                }
+                "$ref": "#/components/schemas/ProcessorAuthorizationConfirmationRequest"
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "200": {
-            "description": "This is where the description of your response will go and it will populate in the area marked in your first screenshot"
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorAuthorizationConfirmationResponse"
+                }
+              }
+            },
+            "description": "OK"
           },
           "400": {
-            "description": "User with that email does not exist"
+            "content": {
+              "application/json": {
+                "example": {
+                  "failureCode": "INVALID_AMOUNT",
+                  "failureType": "INTERNAL_DECLINE",
+                  "failureMessage": "Invalid transaction amount!"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorFailureResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "failureCode": "PROVIDER_PROCESSING_ERROR",
+                  "failureType": "PROVIDER_ERROR",
+                  "failureMessage": "The provider encountered an error while processing the transaction",
+                  "providerFailureCode": "provider_failure_code"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorFailureResponse"
+                }
+              }
+            },
+            "description": "Error occurred while processing the request"
           }
-        }
+        },
+        "summary": "Confirm Authorization",
+        "tags": ["Authorization"]
+      }
+    },
+    "/v1/voids": {
+      "post": {
+        "description": "Void the authorization",
+        "operationId": "voids",
+        "parameters": [
+          {
+            "description": "Authorization Token",
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+            "explode": false,
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Unique request reference to facilitate tracing & debugging",
+            "example": "abc-unique-value-for-tracing",
+            "explode": false,
+            "in": "header",
+            "name": "Request-Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProcessorVoidRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorVoidResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "failureCode": "INVALID_AMOUNT",
+                  "failureType": "INTERNAL_DECLINE",
+                  "failureMessage": "Invalid transaction amount!"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorFailureResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "failureCode": "SETTLED_AUTHORIZATION",
+                  "failureType": "INTERNAL_DECLINE",
+                  "failureMessage": "Authorization is already captured!"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorFailureResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "failureCode": "PROVIDER_PROCESSING_ERROR",
+                  "failureType": "PROVIDER_ERROR",
+                  "failureMessage": "The provider encountered an error while processing the transaction",
+                  "providerFailureCode": "provider_failure_code"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorFailureResponse"
+                }
+              }
+            },
+            "description": "Error occurred while processing the request"
+          }
+        },
+        "summary": "Create Void",
+        "tags": ["Void"]
+      }
+    },
+    "/v1/refunds": {
+      "post": {
+        "description": "Initiate a partial or full refund",
+        "operationId": "refund",
+        "parameters": [
+          {
+            "description": "Authorization Token",
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+            "explode": false,
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Unique request reference to facilitate tracing & debugging",
+            "example": "abc-unique-value-for-tracing",
+            "explode": false,
+            "in": "header",
+            "name": "Request-Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProcessorRefundRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorRefundResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "failureCode": "INVALID_AMOUNT",
+                  "failureType": "INTERNAL_DECLINE",
+                  "failureMessage": "Invalid transaction amount!"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorFailureResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "failureCode": "EXPIRED_CARD",
+                  "failureType": "INTERNAL_DECLINE",
+                  "failureMessage": "The card used has expired and is no longer valid."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorFailureResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "failureCode": "PROVIDER_PROCESSING_ERROR",
+                  "failureType": "PROVIDER_ERROR",
+                  "failureMessage": "The provider encountered an error while processing the transaction",
+                  "providerFailureCode": "provider_failure_code"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorFailureResponse"
+                }
+              }
+            },
+            "description": "Error occurred while processing the request"
+          }
+        },
+        "summary": "Create Refund",
+        "tags": ["Refund"]
+      }
+    },
+    "/v1/captures": {
+      "post": {
+        "description": "Initiate a partial or a full capture",
+        "operationId": "capture",
+        "parameters": [
+          {
+            "description": "Authorization Token",
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+            "explode": false,
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Unique request reference to facilitate tracing & debugging",
+            "example": "abc-unique-value-for-tracing",
+            "explode": false,
+            "in": "header",
+            "name": "Request-Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProcessorCaptureRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorCaptureResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "failureCode": "INVALID_AMOUNT",
+                  "failureType": "INTERNAL_DECLINE",
+                  "failureMessage": "Invalid transaction amount!"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorFailureResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "failureCode": "EXPIRED_AUTHORIZATION",
+                  "failureType": "INTERNAL_DECLINE",
+                  "failureMessage": "Authorization is expired!"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorFailureResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "failureCode": "PROVIDER_PROCESSING_ERROR",
+                  "failureType": "PROVIDER_ERROR",
+                  "failureMessage": "The provider encountered an error while processing the transaction",
+                  "providerFailureCode": "provider_failure_code"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorFailureResponse"
+                }
+              }
+            },
+            "description": "Error occurred while processing the request"
+          }
+        },
+        "summary": "Create capture",
+        "tags": ["Capture"]
+      }
+    },
+    "/v1/authorizations": {
+      "post": {
+        "description": "Initiate an authorization request",
+        "operationId": "authorize",
+        "parameters": [
+          {
+            "description": "Authorization Token",
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+            "explode": false,
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          },
+          {
+            "description": "Unique request reference to facilitate tracing & debugging",
+            "example": "abc-unique-value-for-tracing",
+            "explode": false,
+            "in": "header",
+            "name": "Request-Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "style": "simple"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProcessorAuthorizationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorAuthorizationResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "failureCode": "INVALID_AMOUNT",
+                  "failureType": "INTERNAL_DECLINE",
+                  "failureMessage": "Invalid transaction amount!"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorFailureResponse"
+                }
+              }
+            },
+            "description": "Bad request"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "failureCode": "IS_EXCEEDING_ACCOUNT_LIMIT",
+                  "failureType": "INTERNAL_DECLINE",
+                  "failureMessage": "The transaction exceeds the account's available limits.!"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorFailureResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "failureCode": "PROVIDER_PROCESSING_ERROR",
+                  "failureType": "PROVIDER_ERROR",
+                  "failureMessage": "The provider encountered an error while processing the transaction",
+                  "providerFailureCode": "provider_failure_code"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessorFailureResponse"
+                }
+              }
+            },
+            "description": "Error occurred while processing the request"
+          }
+        },
+        "summary": "Create Authorization",
+        "tags": ["Authorization"]
       }
     }
   },
   "components": {
-    "securitySchemes": {
-      "testQuery": {
-        "type": "apiKey",
-        "in": "query",
-        "name": "key"
-      }
-    },
     "schemas": {
-      "User": {
-        "type": "object",
-        "description": "This is the User Object",
-        "required": ["email", "password"],
+      "ProcessorRefundConfirmationRequest": {
+        "example": {
+          "amount": 1000,
+          "paymentChargeId": "charge_RAbaEhVCVnqRWY2HL78GV"
+        },
         "properties": {
-          "email": {
-            "type": "string",
-            "default": "test@email.com",
-            "description": "user's email"
+          "paymentChargeId": {
+            "description": "PPRO's payment charge id",
+            "example": "charge_RAbaEhVCVnqRWY2HL78GV",
+            "type": "string"
           },
-          "firstName": {
-            "type": "string",
-            "example": "First Name",
-            "description": "Adding a description here will will have the description populate in the area marked in your second screenshot"
-          },
-          "lastName": {
-            "type": "string",
-            "example": "Last Name",
-            "description": "user's last name",
-            "nullable": false
-          },
-          "password": {
-            "type": "string",
-            "description": "user's password"
-          },
-          "Twitter handle": {
-            "type": "string",
-            "description": " twitter account of the member"
-          },
-          "Lifetime points earned": {
-            "type": "string",
-            "description": " the total points a member has earned so far"
-          },
-          "First Name": {
-            "type": "string",
-            "description": "The first name of the memeber"
+          "amount": {
+            "description": "The amount in the currency's smallest unit.",
+            "example": 1000,
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
           }
         },
+        "required": ["amount", "paymentChargeId"]
+      },
+      "ProcessorFailureResponse": {
         "example": {
-          "default": {
-            "email": "test@test.com",
-            "firstName": "Terrell",
-            "lastName": "Tullis"
+          "failureCode": "INVALID_AMOUNT",
+          "providerFailureCode": "provider_failure_code",
+          "failureType": "PROVIDER_DECLINE",
+          "failureMessage": "Invalid transaction amount!"
+        },
+        "properties": {
+          "failureType": {
+            "description": "The failure type.",
+            "enum": [
+              "INTERNAL_ERROR",
+              "INTERNAL_DECLINE",
+              "PROVIDER_ERROR",
+              "PROVIDER_DECLINE"
+            ],
+            "example": "PROVIDER_DECLINE",
+            "type": "string"
+          },
+          "failureCode": {
+            "description": "The failure code.",
+            "example": "INVALID_AMOUNT",
+            "type": "string"
+          },
+          "failureMessage": {
+            "description": "The failure message.",
+            "example": "Invalid transaction amount!",
+            "type": "string"
+          },
+          "providerFailureCode": {
+            "description": "The payment provider failure code.",
+            "example": "provider_failure_code",
+            "type": "string"
           }
         }
       },
-      "Testing": {
-        "oneOf": [
+      "ProcessorRefundConfirmationResponse": {
+        "example": {
+          "createdAt": "2022-11-03T11:23:47.123Z",
+          "refundReference": "f4c94dc6-fab4-4e16-92ea-702d3895dbe1",
+          "status": "SUCCEEDED"
+        },
+        "properties": {
+          "refundReference": {
+            "description": "The provider refund reference.",
+            "example": "f4c94dc6-fab4-4e16-92ea-702d3895dbe1",
+            "type": "string"
+          },
+          "status": {
+            "description": "The refund confirmation status.",
+            "enum": ["SUCCEEDED", "FAILED"],
+            "example": "SUCCEEDED",
+            "type": "string"
+          },
+          "createdAt": {
+            "description": "The refund confirmation timestamp in ISO 8601 format.",
+            "example": "2022-11-03T11:23:47.123Z",
+            "format": "date-time",
+            "type": "string"
+          }
+        }
+      },
+      "AppIntentAuthenticationResult": {
+        "allOf": [
           {
-            "$ref": "#/components/schemas/Update"
+            "$ref": "#/components/schemas/AuthenticationResult"
           },
           {
-            "$ref": "#/components/schemas/Test"
+            "properties": {
+              "details": {
+                "$ref": "#/components/schemas/AppIntentAuthenticationResultResultDetails"
+              },
+              "type": {
+                "description": "The APP_INTENT payment authentication type",
+                "enum": ["APP_INTENT"],
+                "type": "string"
+              }
+            }
           }
         ]
       },
-      "Update": {
-        "type": "object",
-        "title": "Business",
+      "AppIntentAuthenticationResultResultDetails": {
         "properties": {
-          "firstName": {
-            "type": "string",
-            "description": "Glossary test <<glossary:testing>>"
+          "decision": {
+            "description": "The authentication decision.",
+            "enum": ["APPROVE", "DENY"],
+            "example": "APPROVE",
+            "type": "string"
           },
-          "testingProperty": {
-            "type": "object",
-            "properties": {},
-            "additionalProperties": true
+          "confirmationSource": {
+            "description": "The confirmation source.",
+            "enum": ["CONSUMER", "PROVIDER"],
+            "example": "CONSUMER",
+            "type": "string"
           },
-          "lastName": {
-            "type": "string",
-            "description": "User's last name to update"
-          },
-          "password": {
-            "type": "string",
-            "format": "password",
-            "description": "User's password to update"
+          "authenticationToken": {
+            "description": "A valid authentication token",
+            "example": "auth_token",
+            "type": "string"
           }
         }
       },
-      "Test": {
-        "type": "object",
-        "title": "Individual",
-        "properties": {
-          "test1": {
-            "type": "string",
-            "description": "\n `maxLength`: 1 \n `required`: true",
-            "deprecated": true
+      "AppNotificationAuthenticationResult": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuthenticationResult"
           },
-          "test2": {
-            "maxLength": 35,
-            "minLength": 35,
-            "type": "string",
-            "description": "Testing allOf 2"
-          },
-          "link-test": {
-            "type": "string",
-            "example": {
-              "link": "https://www.google.com"
+          {
+            "properties": {
+              "details": {
+                "$ref": "#/components/schemas/AppIntentAuthenticationResultResultDetails"
+              },
+              "type": {
+                "description": "The APP_NOTIFICATION payment authentication type",
+                "enum": ["APP_NOTIFICATION"],
+                "type": "string"
+              }
             }
           }
+        ]
+      },
+      "AuthenticationResult": {
+        "description": "Provider authentication result",
+        "discriminator": {
+          "propertyName": "type"
+        },
+        "example": {
+          "details": {
+            "decision": "APPROVE",
+            "confirmationSource": "CONSUMER",
+            "authenticationToken": "auth_token"
+          },
+          "type": "REDIRECT"
+        },
+        "properties": {
+          "type": {
+            "enum": [
+              "REDIRECT",
+              "SCAN_CODE",
+              "MULTI_FACTOR",
+              "APP_INTENT",
+              "EXTERNAL_3DS",
+              "APP_NOTIFICATION"
+            ],
+            "type": "string"
+          },
+          "details": {
+            "$ref": "#/components/schemas/AuthenticationResultDetails"
+          }
         }
+      },
+      "AuthenticationResultDetails": {
+        "properties": {
+          "decision": {
+            "description": "The authentication decision.",
+            "enum": ["APPROVE", "DENY"],
+            "example": "APPROVE",
+            "type": "string"
+          },
+          "confirmationSource": {
+            "description": "The confirmation source.",
+            "enum": ["CONSUMER", "PROVIDER"],
+            "example": "CONSUMER",
+            "type": "string"
+          }
+        }
+      },
+      "MultiFactorAuthenticationResult": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuthenticationResult"
+          },
+          {
+            "properties": {
+              "details": {
+                "$ref": "#/components/schemas/MultiFactorAuthenticationResultDetails"
+              },
+              "type": {
+                "description": "The MULTI_FACTOR payment authentication type",
+                "enum": ["MULTI_FACTOR"],
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "MultiFactorAuthenticationResultDetails": {
+        "properties": {
+          "decision": {
+            "description": "The authentication decision.",
+            "enum": ["APPROVE", "DENY"],
+            "example": "APPROVE",
+            "type": "string"
+          },
+          "confirmationSource": {
+            "description": "The confirmation source.",
+            "enum": ["CONSUMER", "PROVIDER"],
+            "example": "CONSUMER",
+            "type": "string"
+          },
+          "authenticationToken": {
+            "description": "A valid authentication token",
+            "example": "auth_token",
+            "type": "string"
+          }
+        }
+      },
+      "ProcessorAuthorizationConfirmationRequest": {
+        "example": {
+          "authenticationResult": {
+            "details": {
+              "decision": "APPROVE",
+              "confirmationSource": "CONSUMER",
+              "authenticationToken": "auth_token"
+            },
+            "type": "REDIRECT"
+          },
+          "amount": 1000,
+          "paymentChargeId": "charge_RAbaEhVCVnqRWY2HL78GV"
+        },
+        "properties": {
+          "paymentChargeId": {
+            "description": "PPRO's payment charge id",
+            "example": "charge_RAbaEhVCVnqRWY2HL78GV",
+            "type": "string"
+          },
+          "amount": {
+            "description": "The amount in the currency's smallest unit.",
+            "example": 1000,
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "authenticationResult": {
+            "$ref": "#/components/schemas/ProcessorAuthorizationConfirmationRequest_authenticationResult"
+          }
+        },
+        "required": ["amount", "paymentChargeId"]
+      },
+      "RedirectAuthenticationResult": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuthenticationResult"
+          },
+          {
+            "properties": {
+              "details": {
+                "$ref": "#/components/schemas/RedirectAuthenticationResultDetails"
+              },
+              "type": {
+                "description": "The REDIRECT payment authentication type",
+                "enum": ["REDIRECT"],
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "RedirectAuthenticationResultDetails": {
+        "properties": {
+          "decision": {
+            "description": "The authentication decision.",
+            "enum": ["APPROVE", "DENY"],
+            "example": "APPROVE",
+            "type": "string"
+          },
+          "confirmationSource": {
+            "description": "The confirmation source.",
+            "enum": ["CONSUMER", "PROVIDER"],
+            "example": "CONSUMER",
+            "type": "string"
+          },
+          "authenticationToken": {
+            "description": "A valid authentication token",
+            "type": "string"
+          }
+        }
+      },
+      "ScanCodeAuthenticationResult": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuthenticationResult"
+          },
+          {
+            "properties": {
+              "details": {
+                "$ref": "#/components/schemas/ScanCodeAuthenticationResultDetails"
+              },
+              "type": {
+                "description": "The SCAN_CODE payment authentication type",
+                "enum": ["SCAN_CODE"],
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "ScanCodeAuthenticationResultDetails": {
+        "properties": {
+          "decision": {
+            "description": "The authentication decision.",
+            "enum": ["APPROVE", "DENY"],
+            "example": "APPROVE",
+            "type": "string"
+          },
+          "confirmationSource": {
+            "description": "The confirmation source.",
+            "enum": ["CONSUMER", "PROVIDER"],
+            "example": "CONSUMER",
+            "type": "string"
+          },
+          "authenticationToken": {
+            "description": "A valid authentication token",
+            "example": "auth_token",
+            "type": "string"
+          }
+        }
+      },
+      "ProcessorAuthorizationConfirmationResponse": {
+        "example": {
+          "createdAt": "2022-11-03T11:23:47.123Z",
+          "authorizationReference": "eb1a2082-2bf7-46de-937a-44072ac4fe5f",
+          "status": "SUCCEEDED"
+        },
+        "properties": {
+          "authorizationReference": {
+            "description": "Provider authorization reference",
+            "example": "eb1a2082-2bf7-46de-937a-44072ac4fe5f",
+            "type": "string"
+          },
+          "status": {
+            "description": "The authorization status.",
+            "enum": ["SUCCEEDED", "FAILED"],
+            "example": "SUCCEEDED",
+            "type": "string"
+          },
+          "createdAt": {
+            "description": "The authorization timestamp in ISO 8601 format.",
+            "example": "2022-11-03T11:23:47.123Z",
+            "format": "date-time",
+            "type": "string"
+          }
+        }
+      },
+      "ProcessorVoidRequest": {
+        "example": {
+          "amount": 1000,
+          "authorizationReference": "eb1a2082-2bf7-46de-937a-44072ac4fe5f",
+          "merchantVoidReference": "merchant_void_reference",
+          "paymentChargeId": "charge_RAbaEhVCVnqRWY2HL78GV"
+        },
+        "properties": {
+          "paymentChargeId": {
+            "description": "PPRO's payment charge id",
+            "example": "charge_RAbaEhVCVnqRWY2HL78GV",
+            "type": "string"
+          },
+          "authorizationReference": {
+            "description": "The provider authorization reference.",
+            "example": "eb1a2082-2bf7-46de-937a-44072ac4fe5f",
+            "type": "string"
+          },
+          "merchantVoidReference": {
+            "description": "The merchant provided void reference.",
+            "example": "merchant_void_reference",
+            "type": "string"
+          },
+          "amount": {
+            "description": "The void amount currency's smallest unit.",
+            "example": 1000,
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": ["amount", "authorizationReference", "paymentChargeId"]
+      },
+      "ProcessorVoidResponse": {
+        "example": {
+          "voidReference": "abca2c48-9938-40ef-b778-62d6dcd58693",
+          "createdAt": "2022-11-03T11:23:47.123Z",
+          "status": "SUCCEEDED"
+        },
+        "properties": {
+          "status": {
+            "description": "The void status",
+            "enum": ["SUCCEEDED"],
+            "example": "SUCCEEDED",
+            "type": "string"
+          },
+          "voidReference": {
+            "description": "The provider void reference.",
+            "example": "abca2c48-9938-40ef-b778-62d6dcd58693",
+            "type": "string"
+          },
+          "createdAt": {
+            "description": "The void creation timestamp in ISO 8601 format.",
+            "example": "2022-11-03T11:23:47.123Z",
+            "format": "date-time",
+            "type": "string"
+          }
+        }
+      },
+      "ProcessorRefundRequest": {
+        "example": {
+          "amount": 1000,
+          "merchantRefundReference": "5c019979-0751-469e-96e0-b67f1d95c577",
+          "refundReason": "RETURN",
+          "authorizationReference": "eb1a2082-2bf7-46de-937a-44072ac4fe5f",
+          "refundShortCode": "8AWRTU9",
+          "paymentChargeId": "charge_RAbaEhVCVnqRWY2HL78GV",
+          "refundId": "refund_RAbaEhVCVnqRWY2HL78GV",
+          "merchantRefundDescriptor": "Acme - Refund ORDER 1234"
+        },
+        "properties": {
+          "paymentChargeId": {
+            "description": "PPRO's payment charge id",
+            "example": "charge_RAbaEhVCVnqRWY2HL78GV",
+            "type": "string"
+          },
+          "refundId": {
+            "description": "PPRO's refund id",
+            "example": "refund_RAbaEhVCVnqRWY2HL78GV",
+            "type": "string"
+          },
+          "refundShortCode": {
+            "description": "PPRO's refund short code, this can be expected back in the reconcilliation/settlement files.",
+            "example": "8AWRTU9",
+            "type": "string"
+          },
+          "merchantRefundReference": {
+            "description": "The merchant provided refund reference.",
+            "example": "5c019979-0751-469e-96e0-b67f1d95c577",
+            "type": "string"
+          },
+          "merchantRefundDescriptor": {
+            "description": "The merchant provided refund descriptor (arbitrary string). To provide on the consumer's bank statement.",
+            "example": "Acme - Refund ORDER 1234",
+            "type": "string"
+          },
+          "refundReason": {
+            "description": "The reason for the refund request.",
+            "enum": [
+              "RETURN",
+              "DUPLICATE",
+              "FRAUD",
+              "CUSTOMER_REQUEST",
+              "OTHER"
+            ],
+            "type": "string"
+          },
+          "authorizationReference": {
+            "description": "The provider authorization reference.",
+            "example": "eb1a2082-2bf7-46de-937a-44072ac4fe5f",
+            "type": "string"
+          },
+          "amount": {
+            "description": "The refund amount currency's smallest unit.",
+            "example": 1000,
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "amount",
+          "authorizationReference",
+          "paymentChargeId",
+          "refundId",
+          "refundShortCode"
+        ]
+      },
+      "ProcessorRefundResponse": {
+        "example": {
+          "createdAt": "2022-11-03T11:23:47.123Z",
+          "refundReference": "f4c94dc6-fab4-4e16-92ea-702d3895dbe1",
+          "status": "SUCCEEDED"
+        },
+        "properties": {
+          "status": {
+            "description": "The refund status.",
+            "enum": ["PENDING", "SUCCEEDED"],
+            "example": "SUCCEEDED",
+            "type": "string"
+          },
+          "refundReference": {
+            "description": "The provider refund reference.",
+            "example": "f4c94dc6-fab4-4e16-92ea-702d3895dbe1",
+            "type": "string"
+          },
+          "createdAt": {
+            "description": "The refund creation timestamp in ISO 8601 format.",
+            "example": "2022-11-03T11:23:47.123Z",
+            "format": "date-time",
+            "type": "string"
+          }
+        }
+      },
+      "ProcessorCaptureRequest": {
+        "example": {
+          "amount": 1000,
+          "merchantCaptureReference": "merchant_capture_reference",
+          "authorizationReference": "eb1a2082-2bf7-46de-937a-44072ac4fe5f",
+          "paymentChargeId": "charge_RAbaEhVCVnqRWY2HL78GV"
+        },
+        "properties": {
+          "paymentChargeId": {
+            "description": "PPRO's payment charge id",
+            "example": "charge_RAbaEhVCVnqRWY2HL78GV",
+            "type": "string"
+          },
+          "authorizationReference": {
+            "description": "The provider authorization reference.",
+            "example": "eb1a2082-2bf7-46de-937a-44072ac4fe5f",
+            "type": "string"
+          },
+          "merchantCaptureReference": {
+            "description": "The merchant provided capture reference.",
+            "example": "merchant_capture_reference",
+            "type": "string"
+          },
+          "amount": {
+            "description": "The capture amount in the currency's smallest unit.",
+            "example": 1000,
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": ["amount", "authorizationReference", "paymentChargeId"]
+      },
+      "ProcessorCaptureResponse": {
+        "example": {
+          "createdAt": "2022-11-03T11:23:47.123Z",
+          "captureReference": "d92c4fee-336e-44b7-bedb-986a69744f42",
+          "status": "SUCCEEDED"
+        },
+        "properties": {
+          "status": {
+            "description": "The capture status",
+            "enum": ["SUCCEEDED"],
+            "example": "SUCCEEDED",
+            "type": "string"
+          },
+          "captureReference": {
+            "description": "The provider capture reference.",
+            "example": "d92c4fee-336e-44b7-bedb-986a69744f42",
+            "type": "string"
+          },
+          "createdAt": {
+            "description": "The capture creation timestamp in ISO 8601 format.",
+            "example": "2022-11-03T11:23:47.123Z",
+            "format": "date-time",
+            "type": "string"
+          }
+        }
+      },
+      "Address": {
+        "example": {
+          "firstName": "John",
+          "lastName": "Smith",
+          "country": "DE",
+          "phoneNumber": "+491521111111",
+          "city": "Berlin",
+          "street": "Maple Street 102/B",
+          "postalCode": "041460",
+          "region": "Berlin"
+        },
+        "properties": {
+          "firstName": {
+            "description": "The address first name.",
+            "example": "John",
+            "type": "string"
+          },
+          "lastName": {
+            "description": "The address last name.",
+            "example": "Smith",
+            "type": "string"
+          },
+          "phoneNumber": {
+            "description": "The address phone number.",
+            "example": "+491521111111",
+            "type": "string"
+          },
+          "street": {
+            "description": "Street name, house number and other details such as apartment number or door number",
+            "example": "Maple Street 102/B",
+            "type": "string"
+          },
+          "postalCode": {
+            "description": "The address postal code.",
+            "example": "041460",
+            "type": "string"
+          },
+          "city": {
+            "description": "The address city.",
+            "example": "Berlin",
+            "type": "string"
+          },
+          "region": {
+            "description": "The address region.",
+            "example": "Berlin",
+            "type": "string"
+          },
+          "country": {
+            "description": "The address country.",
+            "example": "DE",
+            "type": "string"
+          }
+        }
+      },
+      "AirlineDetails": {
+        "example": {
+          "passengerName": "John Doe",
+          "passengerPhone": "+491521111111",
+          "pnr": "SKJ2NS01AS",
+          "tripSegments": [
+            {
+              "destinationAirportCode": "SYD",
+              "fareBasisCode": "YE3MGB",
+              "segmentId": 1,
+              "departureDate": "2025-01-01T00:00:00.000Z",
+              "flightCarrierCode": "016",
+              "departureAirportCode": "MAN",
+              "flightNumber": "BA98"
+            },
+            {
+              "destinationAirportCode": "SYD",
+              "fareBasisCode": "YE3MGB",
+              "segmentId": 1,
+              "departureDate": "2025-01-01T00:00:00.000Z",
+              "flightCarrierCode": "016",
+              "departureAirportCode": "MAN",
+              "flightNumber": "BA98"
+            }
+          ],
+          "carrierCode": "016",
+          "airlineCode": "016",
+          "numberOfPassengers": 1,
+          "passengerEmail": "john@gmail.com"
+        },
+        "properties": {
+          "pnr": {
+            "description": "The passenger number record",
+            "example": "SKJ2NS01AS",
+            "type": "string"
+          },
+          "numberOfPassengers": {
+            "description": "The number of passengers",
+            "example": 1,
+            "format": "int32",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "airlineCode": {
+            "description": "The airline code",
+            "example": "016",
+            "type": "string"
+          },
+          "passengerEmail": {
+            "description": "The passenger email",
+            "example": "john@gmail.com",
+            "type": "string"
+          },
+          "passengerPhone": {
+            "description": "The passenger phone number",
+            "example": "+491521111111",
+            "type": "string"
+          },
+          "passengerName": {
+            "description": "The passenger name",
+            "example": "John Doe",
+            "type": "string"
+          },
+          "carrierCode": {
+            "description": "The airline carrier code",
+            "example": "016",
+            "type": "string"
+          },
+          "tripSegments": {
+            "description": "The trip segment details",
+            "items": {
+              "$ref": "#/components/schemas/AirlineTripSegment"
+            },
+            "type": "array"
+          }
+        }
+      },
+      "AirlineIndustryData": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IndustryData"
+          },
+          {
+            "properties": {
+              "details": {
+                "$ref": "#/components/schemas/AirlineDetails"
+              },
+              "type": {
+                "description": "The AIRLINE industry data type.",
+                "enum": ["AIRLINE"],
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "example": {
+          "details": {
+            "passengerName": "John Doe",
+            "passengerPhone": "+491521111111",
+            "pnr": "SKJ2NS01AS",
+            "tripSegments": [
+              {
+                "destinationAirportCode": "SYD",
+                "fareBasisCode": "YE3MGB",
+                "segmentId": 1,
+                "departureDate": "2025-01-01T00:00:00.000Z",
+                "flightCarrierCode": "016",
+                "departureAirportCode": "MAN",
+                "flightNumber": "BA98"
+              },
+              {
+                "destinationAirportCode": "SYD",
+                "fareBasisCode": "YE3MGB",
+                "segmentId": 1,
+                "departureDate": "2025-01-01T00:00:00.000Z",
+                "flightCarrierCode": "016",
+                "departureAirportCode": "MAN",
+                "flightNumber": "BA98"
+              }
+            ],
+            "carrierCode": "016",
+            "airlineCode": "016",
+            "numberOfPassengers": 1,
+            "passengerEmail": "john@gmail.com"
+          },
+          "type": "AIRLINE"
+        },
+        "required": ["details"]
+      },
+      "AirlineTripSegment": {
+        "example": {
+          "destinationAirportCode": "SYD",
+          "fareBasisCode": "YE3MGB",
+          "segmentId": 1,
+          "departureDate": "2025-01-01T00:00:00.000Z",
+          "flightCarrierCode": "016",
+          "departureAirportCode": "MAN",
+          "flightNumber": "BA98"
+        },
+        "properties": {
+          "fareBasisCode": {
+            "description": "The fare basis code",
+            "example": "YE3MGB",
+            "type": "string"
+          },
+          "departureAirportCode": {
+            "description": "The departure airport code",
+            "example": "MAN",
+            "type": "string"
+          },
+          "destinationAirportCode": {
+            "description": "The destination airport code",
+            "example": "SYD",
+            "type": "string"
+          },
+          "flightNumber": {
+            "description": "The flight number",
+            "example": "BA98",
+            "type": "string"
+          },
+          "departureDate": {
+            "description": "The departure date",
+            "example": "2025-01-01T00:00:00.000Z",
+            "format": "date",
+            "type": "string"
+          },
+          "flightCarrierCode": {
+            "description": "The flight carrier code",
+            "example": "016",
+            "type": "string"
+          },
+          "segmentId": {
+            "description": "The trip segment ID",
+            "example": 1,
+            "type": "string"
+          }
+        }
+      },
+      "AppIntentAuthenticationSettings": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuthenticationSettings"
+          },
+          {
+            "properties": {
+              "settings": {
+                "$ref": "#/components/schemas/AppIntentAuthenticationSettingsDetails"
+              },
+              "type": {
+                "description": "The APP_INTENT authentication type.",
+                "enum": ["APP_INTENT"],
+                "example": "APP_INTENT",
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "AppIntentAuthenticationSettingsDetails": {
+        "properties": {
+          "mobileIntentUri": {
+            "description": "The mobile app intent uri where the customer gets redirected to after a successful payment",
+            "example": "amazon://payrequest",
+            "type": "string"
+          }
+        }
+      },
+      "AppNotificationAuthenticationSettings": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuthenticationSettings"
+          },
+          {
+            "properties": {
+              "settings": {
+                "$ref": "#/components/schemas/AppNotificationAuthenticationSettingsDetails"
+              },
+              "type": {
+                "description": "The APP_NOTIFICATION authentication type.",
+                "enum": ["APP_NOTIFICATION"],
+                "example": "APP_NOTIFICATION",
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "AppNotificationAuthenticationSettingsDetails": {
+        "properties": {
+          "instrumentProviderIdentity": {
+            "description": "App identifier, for instance email, phone number",
+            "example": "+34700000000",
+            "type": "string"
+          }
+        }
+      },
+      "AuthenticationSettings": {
+        "discriminator": {
+          "propertyName": "type"
+        },
+        "properties": {
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": ["type"]
+      },
+      "BankAccountDetails": {
+        "properties": {
+          "accountNumber": {
+            "description": "The account number.",
+            "example": "007123456",
+            "type": "string"
+          },
+          "holderName": {
+            "description": "The account holder name.",
+            "example": "John Doe",
+            "type": "string"
+          },
+          "iban": {
+            "description": "The IBAN.",
+            "example": "DE75512108001245126199",
+            "type": "string"
+          },
+          "swiftCode": {
+            "description": "The SWIFT code.",
+            "example": "DEUTDEFF123",
+            "type": "string"
+          },
+          "bankName": {
+            "description": "The bank name.",
+            "example": "My Bank",
+            "type": "string"
+          },
+          "bankCode": {
+            "description": "The bank code.",
+            "example": "012341234",
+            "type": "string"
+          },
+          "debitMandateId": {
+            "description": "The reference id for a mandate that allows debit charges on the bank account.",
+            "example": "debit_123456",
+            "type": "string"
+          }
+        }
+      },
+      "BankAccountInstrument": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PaymentInstrument"
+          },
+          {
+            "properties": {
+              "id": {
+                "description": "Instrument Id",
+                "example": "instr_xLMRLH2wirPOF8XWNnN3h",
+                "type": "string"
+              },
+              "details": {
+                "$ref": "#/components/schemas/BankAccountDetails"
+              },
+              "type": {
+                "description": "The BANK_ACCOUNT payment instrument type",
+                "enum": ["BANK_ACCOUNT"],
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "required": ["id"]
+      },
+      "Challenge": {
+        "properties": {
+          "preference": {
+            "description": "The 3DS authentication challenge initialization preference.",
+            "enum": [
+              "NO_PREFERENCE",
+              "NO_CHALLENGE_REQUESTED",
+              "CHALLENGE_REQUESTED",
+              "CHALLENGE_MANDATED",
+              "DATA_ONLY"
+            ],
+            "type": "string"
+          },
+          "outcome": {
+            "description": "The 3DS authentication challenge outcome.",
+            "enum": ["CHALLENGE", "FRICTIONLESS", "DATA_ONLY"],
+            "type": "string"
+          },
+          "exemptionReason": {
+            "description": "The 3DS authentication challenge exemption reason.",
+            "enum": [
+              "LOW_VALUE",
+              "LOW_RISK",
+              "TRUSTED_BENEFICIARY",
+              "FIXED_RECURRING"
+            ],
+            "type": "string"
+          },
+          "cancellationReason": {
+            "description": "The 3DS challenge cancellation indicator.Mandatory for CB transactions.",
+            "enum": [
+              "CARDHOLDER_CANCELLED",
+              "REQUESTOR_CANCELLED",
+              "TRANSACTION_ABANDONED",
+              "TRANSACTION_TIMEOUT_ACS_OTHER",
+              "TRANSACTION_TIMEOUT_ACS_CREQ_NOT_RECEIVED",
+              "TRANSACTION_ERROR",
+              "UNKNOWN"
+            ],
+            "type": "string"
+          }
+        }
+      },
+      "Client": {
+        "example": {
+          "ip": "11.22.22.33",
+          "userAgent": "Mozilla/5.0 (X11; CrOS x86_64 8172.45.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.64 Safari/537.36"
+        },
+        "properties": {
+          "ip": {
+            "description": "The IP address of the consumer's client",
+            "example": "11.22.22.33",
+            "type": "string"
+          },
+          "userAgent": {
+            "description": "The user agent of the consumer's client device",
+            "example": "Mozilla/5.0 (X11; CrOS x86_64 8172.45.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.64 Safari/537.36",
+            "type": "string"
+          }
+        }
+      },
+      "Consumer": {
+        "example": {
+          "country": "DE",
+          "taxIdentification": "0798154336790",
+          "phone": "+491521111111",
+          "profile": {
+            "firstOrderDate": "2025-01-05T00:00:00.000Z",
+            "createdDate": "2025-01-01T00:00:00.000Z",
+            "lifetimeCanceledOrderCount": 1,
+            "lifetimeOrderCount": 10,
+            "lastOrderDate": "2025-06-06T00:00:00.000Z",
+            "lifetimeOrderValue": 1000
+          },
+          "name": "John Smith",
+          "client": {
+            "ip": "11.22.22.33",
+            "userAgent": "Mozilla/5.0 (X11; CrOS x86_64 8172.45.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.64 Safari/537.36"
+          },
+          "billingAddress": {
+            "firstName": "John",
+            "lastName": "Smith",
+            "country": "DE",
+            "phoneNumber": "+491521111111",
+            "city": "Berlin",
+            "street": "Maple Street 102/B",
+            "postalCode": "041460",
+            "region": "Berlin"
+          },
+          "locale": "de-DE",
+          "merchantConsumerReference": "5c019979-0751-469e-96e0-b67f1d95c577",
+          "birthDate": "1995-06-06T00:00:00.000Z",
+          "email": "johnsmith@example.com"
+        },
+        "properties": {
+          "name": {
+            "description": "The consumer name.",
+            "example": "John Smith",
+            "type": "string"
+          },
+          "email": {
+            "description": "The consumer email.",
+            "example": "johnsmith@example.com",
+            "type": "string"
+          },
+          "phone": {
+            "description": "The consumer phone number.",
+            "example": "+491521111111",
+            "type": "string"
+          },
+          "birthDate": {
+            "description": "The consumer birth date.",
+            "example": "1995-06-06T00:00:00.000Z",
+            "format": "date",
+            "type": "string"
+          },
+          "country": {
+            "description": "2-letter ISO code of the country where the payment instrument or account has been issued or established (for example GB, US, DE).",
+            "example": "DE",
+            "type": "string"
+          },
+          "locale": {
+            "description": "The locale describing the preferred language of the consumer",
+            "example": "de-DE",
+            "type": "string"
+          },
+          "client": {
+            "$ref": "#/components/schemas/Client"
+          },
+          "taxIdentification": {
+            "description": "The consumer tax identification (Social security identification) eg.: CPF in Brazil, NISS in Portugal, NIF in France, Codice Fiscale in Italy etc.",
+            "example": "0798154336790",
+            "type": "string"
+          },
+          "merchantConsumerReference": {
+            "description": "The merchant provided reference for the consumer.",
+            "example": "5c019979-0751-469e-96e0-b67f1d95c577",
+            "type": "string"
+          },
+          "billingAddress": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/Profile"
+          }
+        },
+        "required": ["country"]
+      },
+      "EducationDetails": {
+        "properties": {
+          "admissionNoticeUrl": {
+            "description": "The admission notice url",
+            "type": "string"
+          },
+          "courseStartDate": {
+            "description": "Course start date",
+            "example": "2025-06-10T00:00:00.000Z",
+            "format": "date",
+            "type": "string"
+          },
+          "courseEndDate": {
+            "description": "Course end date",
+            "example": "2025-10-10T00:00:00.000Z",
+            "format": "date",
+            "type": "string"
+          },
+          "financedCourse": {
+            "description": "Whether the course is financed?",
+            "example": true,
+            "type": "boolean"
+          },
+          "diplomaCourse": {
+            "description": "Whether the course is diploma?",
+            "example": true,
+            "type": "boolean"
+          },
+          "postHighSchoolCourse": {
+            "description": "Whether the course is post high school?",
+            "example": true,
+            "type": "boolean"
+          }
+        }
+      },
+      "EducationIndustryData": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IndustryData"
+          },
+          {
+            "properties": {
+              "details": {
+                "$ref": "#/components/schemas/EducationDetails"
+              },
+              "type": {
+                "description": "The EDUCATION industry data type.",
+                "enum": ["EDUCATION"],
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "required": ["details"]
+      },
+      "IndustryData": {
+        "discriminator": {
+          "propertyName": "type"
+        },
+        "properties": {
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": ["type"]
+      },
+      "InstallmentPlan": {
+        "example": {
+          "numberOfInstallments": 6
+        },
+        "properties": {
+          "numberOfInstallments": {
+            "description": "The number of installments the consumer will split the payment into.",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": ["numberOfInstallments"]
+      },
+      "Merchant": {
+        "example": {
+          "id": "merch_cb6RQnZbBwSBkn34QYXhr"
+        },
+        "properties": {
+          "id": {
+            "description": "PPRO assinged Merchant Id, this is allocated during onboarding of the Merchant",
+            "example": "merch_cb6RQnZbBwSBkn34QYXhr",
+            "type": "string"
+          }
+        }
+      },
+      "Money": {
+        "example": {
+          "currency": "EUR",
+          "value": 1000
+        },
+        "properties": {
+          "value": {
+            "description": "The amount in the payment charge currency's smallest unit.",
+            "example": 1000,
+            "format": "int64",
+            "type": "integer"
+          },
+          "currency": {
+            "description": "ISO 4217 3-letter currency code.",
+            "example": "EUR",
+            "maxLength": 3,
+            "minLength": 3,
+            "type": "string"
+          }
+        },
+        "required": ["currency", "value"]
+      },
+      "MultiFactorAuthenticationSettings": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuthenticationSettings"
+          },
+          {
+            "properties": {
+              "settings": {
+                "$ref": "#/components/schemas/MultiFactorAuthenticationSettingsDetails"
+              },
+              "type": {
+                "description": "The MULTI_FACTOR authentication type.",
+                "enum": ["MULTI_FACTOR"],
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "MultiFactorAuthenticationSettingsDetails": {
+        "properties": {
+          "verificationCode": {
+            "description": "Code generated to authenticate the user.",
+            "example": 777123,
+            "type": "string"
+          }
+        }
+      },
+      "Order": {
+        "example": {
+          "orderReferenceNumber": "orderReferenceNumber",
+          "shippingMethod": "VIRTUAL",
+          "shippingAddress": {
+            "firstName": "John",
+            "lastName": "Smith",
+            "country": "DE",
+            "phoneNumber": "+491521111111",
+            "city": "Berlin",
+            "street": "Maple Street 102/B",
+            "postalCode": "041460",
+            "region": "Berlin"
+          },
+          "installmentPlan": {
+            "numberOfInstallments": 6
+          },
+          "industryData": [
+            {
+              "details": {
+                "passengerName": "John Doe",
+                "passengerPhone": "+491521111111",
+                "pnr": "SKJ2NS01AS",
+                "tripSegments": [
+                  {
+                    "destinationAirportCode": "SYD",
+                    "fareBasisCode": "YE3MGB",
+                    "segmentId": 1,
+                    "departureDate": "2025-01-01T00:00:00.000Z",
+                    "flightCarrierCode": "016",
+                    "departureAirportCode": "MAN",
+                    "flightNumber": "BA98"
+                  },
+                  {
+                    "destinationAirportCode": "SYD",
+                    "fareBasisCode": "YE3MGB",
+                    "segmentId": 1,
+                    "departureDate": "2025-01-01T00:00:00.000Z",
+                    "flightCarrierCode": "016",
+                    "departureAirportCode": "MAN",
+                    "flightNumber": "BA98"
+                  }
+                ],
+                "carrierCode": "016",
+                "airlineCode": "016",
+                "numberOfPassengers": 1,
+                "passengerEmail": "john@gmail.com"
+              },
+              "type": "AIRLINE"
+            },
+            {
+              "details": {
+                "passengerName": "John Doe",
+                "passengerPhone": "+491521111111",
+                "pnr": "SKJ2NS01AS",
+                "tripSegments": [
+                  {
+                    "destinationAirportCode": "SYD",
+                    "fareBasisCode": "YE3MGB",
+                    "segmentId": 1,
+                    "departureDate": "2025-01-01T00:00:00.000Z",
+                    "flightCarrierCode": "016",
+                    "departureAirportCode": "MAN",
+                    "flightNumber": "BA98"
+                  },
+                  {
+                    "destinationAirportCode": "SYD",
+                    "fareBasisCode": "YE3MGB",
+                    "segmentId": 1,
+                    "departureDate": "2025-01-01T00:00:00.000Z",
+                    "flightCarrierCode": "016",
+                    "departureAirportCode": "MAN",
+                    "flightNumber": "BA98"
+                  }
+                ],
+                "carrierCode": "016",
+                "airlineCode": "016",
+                "numberOfPassengers": 1,
+                "passengerEmail": "john@gmail.com"
+              },
+              "type": "AIRLINE"
+            }
+          ],
+          "totalTaxAmount": 0,
+          "orderItems": [
+            {
+              "subCategory": "Sports Wear",
+              "amount": 1000,
+              "quantity": 1,
+              "name": "Runnershub DryFit",
+              "sku": "LS123456789",
+              "category": "Apparel"
+            },
+            {
+              "subCategory": "Sports Wear",
+              "amount": 1000,
+              "quantity": 1,
+              "name": "Runnershub DryFit",
+              "sku": "LS123456789",
+              "category": "Apparel"
+            }
+          ]
+        },
+        "properties": {
+          "orderItems": {
+            "description": "The list of order items.",
+            "items": {
+              "$ref": "#/components/schemas/OrderItem"
+            },
+            "type": "array"
+          },
+          "shippingMethod": {
+            "description": "Digital goods/services: VIRTUAL, Physical goods:TRACKED_DELIVERY, UNTRACKED_DELIVERY, IN_STORE_PICKUP, LOCKER_PICKUP or HYBRID",
+            "example": "VIRTUAL",
+            "type": "string"
+          },
+          "shippingAddress": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "industryData": {
+            "description": "Industry Specific Data which is provided by the Merchant - this can be expanded to accommodate more Industry Usecases",
+            "items": {
+              "$ref": "#/components/schemas/Order_industryData_inner"
+            },
+            "type": "array"
+          },
+          "orderReferenceNumber": {
+            "description": "The merchant's internal order reference (if different from merchantPaymentChargeReference)",
+            "type": "string"
+          },
+          "totalTaxAmount": {
+            "description": "The total tax value paid by the consumer for the order (in same currency units as specified by amount.currency)",
+            "format": "int64",
+            "type": "integer"
+          },
+          "installmentPlan": {
+            "$ref": "#/components/schemas/InstallmentPlan"
+          }
+        }
+      },
+      "OrderItem": {
+        "example": {
+          "subCategory": "Sports Wear",
+          "amount": 1000,
+          "quantity": 1,
+          "name": "Runnershub DryFit",
+          "sku": "LS123456789",
+          "category": "Apparel"
+        },
+        "properties": {
+          "sku": {
+            "description": "The order item SKU.",
+            "example": "LS123456789",
+            "type": "string"
+          },
+          "category": {
+            "description": "The order item category.",
+            "example": "Apparel",
+            "type": "string"
+          },
+          "subCategory": {
+            "description": "The order item sub category.",
+            "example": "Sports Wear",
+            "type": "string"
+          },
+          "name": {
+            "description": "The order item name.",
+            "example": "Runnershub DryFit",
+            "type": "string"
+          },
+          "quantity": {
+            "description": "The order item quantity.",
+            "example": 1,
+            "format": "int32",
+            "type": "integer"
+          },
+          "amount": {
+            "description": "The amount to pay for each individual item in the payment charge currency's smallest unit.",
+            "example": 1000,
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["amount", "name", "quantity"]
+      },
+      "OutOfScope": {
+        "properties": {
+          "reason": {
+            "description": "The 3DS out of scope reason, to be used to indicate the reason if the payment is out of scope of SCA",
+            "enum": ["MIT", "MOTO", "ONE_LEG_OUT", "ANONYMOUS"],
+            "type": "string"
+          }
+        }
+      },
+      "PassthroughWalletDetails": {
+        "properties": {
+          "fingerprint": {
+            "description": "The unique identity of the instrument given by a provider (masked with md5 hashing)",
+            "example": "HI8kcoMlRicmvRKYHHJjw",
+            "type": "string"
+          }
+        },
+        "required": ["fingerprint"]
+      },
+      "PassthroughWalletInstrument": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PaymentInstrument"
+          },
+          {
+            "properties": {
+              "id": {
+                "description": "Instrument Id",
+                "example": "instr_xLMRLH2wirPOF8XWNnN3h",
+                "type": "string"
+              },
+              "details": {
+                "$ref": "#/components/schemas/PassthroughWalletDetails"
+              },
+              "type": {
+                "description": "The PASSTHROUGH_WALLET payment instrument can be associated to payments where the money is debited directly from the card or bank account linked to it",
+                "enum": ["PASSTHROUGH_WALLET"],
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "required": ["id"]
+      },
+      "PaymentInstrument": {
+        "discriminator": {
+          "propertyName": "type"
+        },
+        "properties": {
+          "type": {
+            "description": "The payment instrument type",
+            "enum": ["BANK_ACCOUNT", "PASSTHROUGH_WALLET"],
+            "type": "string"
+          },
+          "details": {
+            "description": "The payment instrument details",
+            "type": "object"
+          }
+        }
+      },
+      "ProcessorAuthorizationRequest": {
+        "example": {
+          "amount": {
+            "currency": "EUR",
+            "value": 1000
+          },
+          "paymentProductCode": "PAYIN3",
+          "initiator": "CONSUMER",
+          "merchantAuthorizationReference": "5c019979-0751-469e-96e0-b67f1d95c577",
+          "merchant": {
+            "id": "merch_cb6RQnZbBwSBkn34QYXhr"
+          },
+          "instrument": {
+            "id": "instr_xLMRLH2wirPOF8XWNnN3h",
+            "type": "PASSTHROUGH_WALLET",
+            "details": {
+              "fingerprint": "HI8kcoMlRicmvRKYHHJjw"
+            }
+          },
+          "paymentMedium": "ECOMMERCE",
+          "authenticationSettings": [
+            {
+              "type": "APP_INTENT",
+              "settings": {
+                "mobileIntentUri": "amazon://payrequest"
+              }
+            },
+            {
+              "type": "REDIRECT",
+              "settings": {
+                "returnUrl": "https://www.ppro.com/"
+              }
+            },
+            {
+              "type": "SCAN_CODE",
+              "settings": {
+                "scanBy": "2025-04-02T11:23:47.123Z"
+              }
+            }
+          ],
+          "paymentChargeId": "charge_RAbaEhVCVnqRWY2HL78GV",
+          "paymentDescriptor": "Acme - ORDER 1234",
+          "autoCapture": true,
+          "paymentMethod": "PROPAY",
+          "paymentShortCode": "8AWRTU9",
+          "consumer": {
+            "country": "DE",
+            "taxIdentification": "0798154336790",
+            "phone": "+491521111111",
+            "profile": {
+              "firstOrderDate": "2025-01-05T00:00:00.000Z",
+              "createdDate": "2025-01-01T00:00:00.000Z",
+              "lifetimeCanceledOrderCount": 1,
+              "lifetimeOrderCount": 10,
+              "lastOrderDate": "2025-06-06T00:00:00.000Z",
+              "lifetimeOrderValue": 1000
+            },
+            "name": "John Smith",
+            "client": {
+              "ip": "11.22.22.33",
+              "userAgent": "Mozilla/5.0 (X11; CrOS x86_64 8172.45.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.64 Safari/537.36"
+            },
+            "billingAddress": {
+              "firstName": "John",
+              "lastName": "Smith",
+              "country": "DE",
+              "phoneNumber": "+491521111111",
+              "city": "Berlin",
+              "street": "Maple Street 102/B",
+              "postalCode": "041460",
+              "region": "Berlin"
+            },
+            "locale": "de-DE",
+            "merchantConsumerReference": "5c019979-0751-469e-96e0-b67f1d95c577",
+            "birthDate": "1995-06-06T00:00:00.000Z",
+            "email": "johnsmith@example.com"
+          },
+          "order": {
+            "orderReferenceNumber": "orderReferenceNumber",
+            "shippingMethod": "VIRTUAL",
+            "shippingAddress": {
+              "firstName": "John",
+              "lastName": "Smith",
+              "country": "DE",
+              "phoneNumber": "+491521111111",
+              "city": "Berlin",
+              "street": "Maple Street 102/B",
+              "postalCode": "041460",
+              "region": "Berlin"
+            },
+            "installmentPlan": {
+              "numberOfInstallments": 6
+            },
+            "industryData": [
+              {
+                "details": {
+                  "passengerName": "John Doe",
+                  "passengerPhone": "+491521111111",
+                  "pnr": "SKJ2NS01AS",
+                  "tripSegments": [
+                    {
+                      "destinationAirportCode": "SYD",
+                      "fareBasisCode": "YE3MGB",
+                      "segmentId": 1,
+                      "departureDate": "2025-01-01T00:00:00.000Z",
+                      "flightCarrierCode": "016",
+                      "departureAirportCode": "MAN",
+                      "flightNumber": "BA98"
+                    },
+                    {
+                      "destinationAirportCode": "SYD",
+                      "fareBasisCode": "YE3MGB",
+                      "segmentId": 1,
+                      "departureDate": "2025-01-01T00:00:00.000Z",
+                      "flightCarrierCode": "016",
+                      "departureAirportCode": "MAN",
+                      "flightNumber": "BA98"
+                    }
+                  ],
+                  "carrierCode": "016",
+                  "airlineCode": "016",
+                  "numberOfPassengers": 1,
+                  "passengerEmail": "john@gmail.com"
+                },
+                "type": "AIRLINE"
+              },
+              {
+                "details": {
+                  "passengerName": "John Doe",
+                  "passengerPhone": "+491521111111",
+                  "pnr": "SKJ2NS01AS",
+                  "tripSegments": [
+                    {
+                      "destinationAirportCode": "SYD",
+                      "fareBasisCode": "YE3MGB",
+                      "segmentId": 1,
+                      "departureDate": "2025-01-01T00:00:00.000Z",
+                      "flightCarrierCode": "016",
+                      "departureAirportCode": "MAN",
+                      "flightNumber": "BA98"
+                    },
+                    {
+                      "destinationAirportCode": "SYD",
+                      "fareBasisCode": "YE3MGB",
+                      "segmentId": 1,
+                      "departureDate": "2025-01-01T00:00:00.000Z",
+                      "flightCarrierCode": "016",
+                      "departureAirportCode": "MAN",
+                      "flightNumber": "BA98"
+                    }
+                  ],
+                  "carrierCode": "016",
+                  "airlineCode": "016",
+                  "numberOfPassengers": 1,
+                  "passengerEmail": "john@gmail.com"
+                },
+                "type": "AIRLINE"
+              }
+            ],
+            "totalTaxAmount": 0,
+            "orderItems": [
+              {
+                "subCategory": "Sports Wear",
+                "amount": 1000,
+                "quantity": 1,
+                "name": "Runnershub DryFit",
+                "sku": "LS123456789",
+                "category": "Apparel"
+              },
+              {
+                "subCategory": "Sports Wear",
+                "amount": 1000,
+                "quantity": 1,
+                "name": "Runnershub DryFit",
+                "sku": "LS123456789",
+                "category": "Apparel"
+              }
+            ]
+          }
+        },
+        "properties": {
+          "paymentMethod": {
+            "description": "Payment Method Name which is used to process the payment. Must be uppercase.",
+            "example": "PROPAY",
+            "pattern": "^[A-Z0-9_]+$",
+            "type": "string"
+          },
+          "paymentProductCode": {
+            "description": "Payment Method product code.",
+            "example": "PAYIN3",
+            "type": "string"
+          },
+          "paymentMedium": {
+            "default": "ECOMMERCE",
+            "description": "The payment medium.",
+            "enum": ["ECOMMERCE", "MOTO", "POS"],
+            "example": "ECOMMERCE",
+            "type": "string"
+          },
+          "initiator": {
+            "description": "The initiator of the charge",
+            "enum": ["CONSUMER", "MERCHANT"],
+            "type": "string"
+          },
+          "paymentChargeId": {
+            "description": "PPRO's payment charge id",
+            "example": "charge_RAbaEhVCVnqRWY2HL78GV",
+            "type": "string"
+          },
+          "paymentShortCode": {
+            "description": "PPRO's payment short code, this can be expected back in the reconcilliation/settlement files.",
+            "example": "8AWRTU9",
+            "type": "string"
+          },
+          "paymentDescriptor": {
+            "description": "This is a string which may be presented on the consumer's bank statement.",
+            "example": "Acme - ORDER 1234",
+            "type": "string"
+          },
+          "merchantAuthorizationReference": {
+            "description": "Payment Authorization Reference as received from the Merchant",
+            "example": "5c019979-0751-469e-96e0-b67f1d95c577",
+            "type": "string"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "authenticationSettings": {
+            "description": "Authentication settings required for the authentication methods supported by the provider.",
+            "example": [
+              {
+                "type": "APP_INTENT",
+                "settings": {
+                  "mobileIntentUri": "amazon://payrequest"
+                }
+              },
+              {
+                "type": "REDIRECT",
+                "settings": {
+                  "returnUrl": "https://www.ppro.com/"
+                }
+              },
+              {
+                "type": "SCAN_CODE",
+                "settings": {
+                  "scanBy": "2025-04-02T11:23:47.123Z"
+                }
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ProcessorAuthorizationRequest_authenticationSettings_inner"
+            },
+            "type": "array"
+          },
+          "consumer": {
+            "$ref": "#/components/schemas/Consumer"
+          },
+          "order": {
+            "$ref": "#/components/schemas/Order"
+          },
+          "merchant": {
+            "$ref": "#/components/schemas/Merchant"
+          },
+          "instrument": {
+            "$ref": "#/components/schemas/ProcessorAuthorizationRequest_instrument"
+          },
+          "autoCapture": {
+            "description": "The flag to indicate the intent to capture the authorization automatically",
+            "example": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "amount",
+          "paymentChargeId",
+          "paymentMethod",
+          "paymentShortCode"
+        ]
+      },
+      "Profile": {
+        "example": {
+          "firstOrderDate": "2025-01-05",
+          "createdDate": "2025-01-01",
+          "lifetimeCanceledOrderCount": 1,
+          "lifetimeOrderCount": 10,
+          "lastOrderDate": "2025-06-06",
+          "lifetimeOrderValue": 1000
+        },
+        "properties": {
+          "createdDate": {
+            "description": "Profile creation date",
+            "example": "2025-01-01",
+            "format": "date",
+            "type": "string"
+          },
+          "firstOrderDate": {
+            "description": "Date of first order",
+            "example": "2025-01-05",
+            "format": "date",
+            "type": "string"
+          },
+          "lastOrderDate": {
+            "description": "Date of recent order",
+            "example": "2025-06-06",
+            "format": "date",
+            "type": "string"
+          },
+          "lifetimeOrderCount": {
+            "description": "Total number of successful orders",
+            "example": 10,
+            "format": "int64",
+            "type": "integer"
+          },
+          "lifetimeOrderValue": {
+            "description": "Total lifetime order value",
+            "example": 1000,
+            "format": "int64",
+            "type": "integer"
+          },
+          "lifetimeCanceledOrderCount": {
+            "description": "Total number of cancelled orders",
+            "example": 1,
+            "format": "int64",
+            "type": "integer"
+          }
+        }
+      },
+      "RedirectAuthenticationSettings": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuthenticationSettings"
+          },
+          {
+            "properties": {
+              "settings": {
+                "$ref": "#/components/schemas/RedirectAuthenticationSettingsDetails"
+              },
+              "type": {
+                "description": "The REDIRECT authentication type settings.",
+                "enum": ["REDIRECT"],
+                "example": "REDIRECT",
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "RedirectAuthenticationSettingsDetails": {
+        "properties": {
+          "returnUrl": {
+            "description": "The page where the consumer should be redirected to after the payment succeeds.",
+            "example": "https://example.com/order_details?order_id=12345",
+            "type": "string"
+          }
+        }
+      },
+      "ScanCodeAuthenticationSettings": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuthenticationSettings"
+          },
+          {
+            "properties": {
+              "settings": {
+                "$ref": "#/components/schemas/ScanCodeAuthenticationSettingsDetails"
+              },
+              "type": {
+                "description": "The SCAN_CODE authentication type.",
+                "enum": ["SCAN_CODE"],
+                "example": "SCAN_CODE",
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "ScanCodeAuthenticationSettingsDetails": {
+        "properties": {
+          "scanBy": {
+            "description": "Custom expiry date in ISO 8601 format.",
+            "example": "2022-11-03T11:23:47.123Z",
+            "format": "date-time",
+            "type": "string"
+          }
+        }
+      },
+      "ThreeDSecure": {
+        "properties": {
+          "authenticationStatus": {
+            "description": "The 3DS authentication status code.",
+            "enum": [
+              "SUCCESS",
+              "ATTEMPT_ACKNOWLEDGED",
+              "FAILED",
+              "AUTHENTICATION_UNAVAILABLE"
+            ],
+            "type": "string"
+          },
+          "authenticationStatusReason": {
+            "description": "The 3DS authentication status reason.",
+            "enum": [
+              "CARD_AUTHENTICATION_FAILED",
+              "UNKNOWN_DEVICE",
+              "UNSUPPORTED_DEVICE",
+              "EXCEEDS_AUTHENTICATION_FREQUENCY_LIMIT",
+              "EXPIRED_CARD",
+              "INVALID_CARD_NUMBER",
+              "INVALID_TRANSACTION",
+              "NO_CARD_RECORD",
+              "SECURITY_FAILURE",
+              "STOLEN_CARD",
+              "SUSPECTED_FRAUD",
+              "TRANSACTION_NOT_PERMITTED_TO_CARDHOLDER",
+              "CARDHOLDER_NOT_ENROLLED_IN_SERVICE",
+              "TRANSACTION_TIMED_OUT_AT_THE_ACS",
+              "LOW_CONFIDENCE",
+              "MEDIUM_CONFIDENCE",
+              "HIGH_CONFIDENCE",
+              "VERY_HIGH_CONFIDENCE",
+              "EXCEEDS_ACS_MAXIMUM_CHALLENGES",
+              "NON_PAYMENT_TRANSACTION_NOT_SUPPORTED",
+              "THREE_RI_TRANSACTION_NOT_SUPPORTED"
+            ],
+            "type": "string"
+          },
+          "authenticationValue": {
+            "description": "The 3DS authentication CAVV.",
+            "type": "string"
+          },
+          "authenticationAlgorithm": {
+            "description": "The 3DS authentication CAVV algorithm used.",
+            "type": "string"
+          },
+          "authenticationMode": {
+            "description": "The 3DS authentication mode.",
+            "enum": ["SCA", "FRICTIONLESS"],
+            "type": "string"
+          },
+          "eci": {
+            "description": "The 3DS authentication ECI.",
+            "type": "string"
+          },
+          "version": {
+            "description": "The 3DS authentication version.",
+            "type": "string"
+          },
+          "externalId": {
+            "description": "The 3DS authentication transaction identifier.",
+            "type": "string"
+          },
+          "externalAcsId": {
+            "description": "The 3DS universally unique transaction identifier assigned by the ACS to identify a single transaction. Canonical format as defined in IETF RFC 4122.",
+            "example": "4dc406b0-038d-43ef-a96c-c85352c5e2c0",
+            "type": "string"
+          },
+          "score": {
+            "description": "The 3DS score.",
+            "type": "string"
+          },
+          "challenge": {
+            "$ref": "#/components/schemas/Challenge"
+          },
+          "outOfScope": {
+            "$ref": "#/components/schemas/OutOfScope"
+          }
+        }
+      },
+      "ThreeDSecureAuthenticationSettings": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuthenticationSettings"
+          },
+          {
+            "properties": {
+              "settings": {
+                "$ref": "#/components/schemas/ThreeDSecure"
+              },
+              "type": {
+                "description": "The EXTERNAL_3DS authentication type settings.",
+                "enum": ["EXTERNAL_3DS"],
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "TravelDetails": {
+        "properties": {
+          "travelType": {
+            "description": "The travel type",
+            "enum": ["UNKNOWN", "ONE_WAY", "TWO_WAY", "MULTIPLE"],
+            "example": "MULTIPLE",
+            "type": "string"
+          },
+          "departureDate": {
+            "description": "Departure date",
+            "example": "2025-06-10T00:00:00.000Z",
+            "format": "date",
+            "type": "string"
+          },
+          "returnDate": {
+            "description": "Return date",
+            "example": "2025-06-15T00:00:00.000Z",
+            "format": "date",
+            "type": "string"
+          },
+          "departureLocation": {
+            "description": "Departure location, if flight then provide IATA Airport Code",
+            "example": "Berlin",
+            "type": "string"
+          },
+          "arrivalLocation": {
+            "description": "Arrival location, if flight then provide IATA Airport Code",
+            "example": "Madrid",
+            "type": "string"
+          },
+          "destinationCountry": {
+            "description": "Destination country",
+            "example": "ES",
+            "type": "string"
+          },
+          "travelCompany": {
+            "description": "Travel company name",
+            "example": "My Travel Company GmbH",
+            "type": "string"
+          },
+          "travelerCount": {
+            "description": "Total number of travellers",
+            "example": 4,
+            "format": "int64",
+            "type": "integer"
+          },
+          "buyerAmongTravelers": {
+            "description": "Is the buyer consumer among travellers?",
+            "example": true,
+            "type": "boolean"
+          },
+          "travelClass": {
+            "description": "The class of travel",
+            "example": "PREMIUM",
+            "type": "string"
+          },
+          "travelInsured": {
+            "description": "Whether the travel is insured?",
+            "example": true,
+            "type": "boolean"
+          },
+          "travelDiscountVoucher": {
+            "description": "Travel discount voucher",
+            "example": "TWENTY-OFF",
+            "type": "string"
+          },
+          "luggageSupplement": {
+            "description": "Whether availing luggage supplement?",
+            "example": true,
+            "type": "boolean"
+          },
+          "travelCanBeModifiedOrCanceled": {
+            "description": "Can the travel be modified or cancelled?",
+            "example": true,
+            "type": "boolean"
+          },
+          "stayCompany": {
+            "description": "Stay company name",
+            "example": "Hotel XYZ",
+            "type": "string"
+          },
+          "stayDestination": {
+            "description": "Stay destination",
+            "example": "Madrid",
+            "type": "string"
+          },
+          "stayNightsCount": {
+            "description": "Stay nights count",
+            "example": 4,
+            "format": "int64",
+            "type": "integer"
+          },
+          "stayRoomRange": {
+            "description": "Stay room category",
+            "example": "4_STARS",
+            "type": "string"
+          }
+        }
+      },
+      "TravelIndustryData": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IndustryData"
+          },
+          {
+            "properties": {
+              "details": {
+                "$ref": "#/components/schemas/TravelDetails"
+              },
+              "type": {
+                "description": "The TRAVEL industry data type.",
+                "enum": ["TRAVEL"],
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "required": ["details"]
+      },
+      "AppIntentAuthenticationDetails": {
+        "properties": {
+          "mobileIntentUri": {
+            "description": "Intent URI to be used for app-to-app mobile flows.",
+            "example": "upiGlobal://pay?tr=123&from_app=true",
+            "type": "string"
+          }
+        }
+      },
+      "AppIntentAuthenticationMethod": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuthenticationMethod"
+          },
+          {
+            "properties": {
+              "details": {
+                "$ref": "#/components/schemas/AppIntentAuthenticationDetails"
+              },
+              "type": {
+                "description": "The APP_INTENT authentication type.",
+                "enum": ["APP_INTENT"],
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "AuthenticationMethod": {
+        "discriminator": {
+          "propertyName": "type"
+        },
+        "properties": {
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": ["type"]
+      },
+      "MultiFactorAuthenticationDetails": {
+        "type": "object"
+      },
+      "MultiFactorAuthenticationMethod": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuthenticationMethod"
+          },
+          {
+            "properties": {
+              "details": {
+                "$ref": "#/components/schemas/MultiFactorAuthenticationDetails"
+              },
+              "type": {
+                "description": "The MULTI_FACTOR authentication type.",
+                "enum": ["MULTI_FACTOR"],
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "ProcessorAuthorizationResponse": {
+        "example": {
+          "createdAt": "2022-11-03T11:23:47.123Z",
+          "authenticationMethods": [
+            {
+              "type": "REDIRECT",
+              "details": {
+                "requestUrl": "https://pay.propay.com/eu/hpp/payments/auth_reference",
+                "requestMethod": "GET"
+              }
+            },
+            {
+              "type": "APP_INTENT",
+              "details": {
+                "mobileIntentUri": "propay-app://authorize?tx=auth_reference"
+              }
+            },
+            {
+              "type": "SCAN_CODE",
+              "details": {
+                "codeType": "QR",
+                "codeImage": "https://cdn.propay.com/qrimagecode232.png",
+                "codePayload": "123123123123123",
+                "codeDocument": "https://cdn.propay.com/scan_document232.pdf",
+                "scanBy": "2024-04-02T11:23:47.123Z"
+              }
+            }
+          ],
+          "authorizationReference": "eb1a2082-2bf7-46de-937a-44072ac4fe5f",
+          "toBeDiscardedAfter": "2000-01-23T04:56:07.000Z",
+          "status": "PENDING",
+          "captureRequired": true
+        },
+        "properties": {
+          "authenticationMethods": {
+            "description": "List of all the Authentication Methods supported by the payment method",
+            "example": [
+              {
+                "type": "REDIRECT",
+                "details": {
+                  "requestUrl": "https://pay.propay.com/eu/hpp/payments/auth_reference",
+                  "requestMethod": "GET"
+                }
+              },
+              {
+                "type": "APP_INTENT",
+                "details": {
+                  "mobileIntentUri": "propay-app://authorize?tx=auth_reference"
+                }
+              },
+              {
+                "type": "SCAN_CODE",
+                "details": {
+                  "codeType": "QR",
+                  "codeImage": "https://cdn.propay.com/qrimagecode232.png",
+                  "codePayload": "123123123123123",
+                  "codeDocument": "https://cdn.propay.com/scan_document232.pdf",
+                  "scanBy": "2024-04-02T11:23:47.123Z"
+                }
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ProcessorAuthorizationResponse_authenticationMethods_inner"
+            },
+            "type": "array"
+          },
+          "status": {
+            "description": "Authorization status",
+            "enum": ["PENDING", "SUCCEEDED"],
+            "example": "PENDING",
+            "type": "string"
+          },
+          "authorizationReference": {
+            "description": "Provider authorization reference",
+            "example": "eb1a2082-2bf7-46de-937a-44072ac4fe5f",
+            "type": "string"
+          },
+          "captureRequired": {
+            "description": "The flag to indicate that explicit Capture is required",
+            "example": true,
+            "type": "boolean"
+          },
+          "toBeDiscardedAfter": {
+            "description": "To be discarded if not captured within the specified time",
+            "format": "date-time",
+            "type": "string"
+          },
+          "createdAt": {
+            "description": "The auth creation timestamp in ISO 8601 format.",
+            "example": "2022-11-03T11:23:47.123Z",
+            "format": "date-time",
+            "type": "string"
+          }
+        }
+      },
+      "RedirectAuthenticationDetails": {
+        "properties": {
+          "requestUrl": {
+            "description": "The URL where the consumer should be redirected in order to authenticate the payment.",
+            "example": "https://pay.playground.klarna.com/eu/hpp/payments/123abc",
+            "type": "string"
+          },
+          "requestMethod": {
+            "description": "The redirect HTTP method.",
+            "enum": ["GET", "POST"],
+            "type": "string"
+          }
+        }
+      },
+      "RedirectAuthenticationMethod": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuthenticationMethod"
+          },
+          {
+            "properties": {
+              "details": {
+                "$ref": "#/components/schemas/RedirectAuthenticationDetails"
+              },
+              "type": {
+                "description": "The REDIRECT authentication type.",
+                "enum": ["REDIRECT"],
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "ScanCodeAuthenticationDetails": {
+        "properties": {
+          "codeType": {
+            "description": "The Scan Code type selected.",
+            "enum": ["QR", "UPC", "ITF", "CODE128"],
+            "type": "string"
+          },
+          "codeImage": {
+            "description": "An already-rendered Scan Code image for ease of integration.",
+            "example": "https://authman-mobileapp.ppro.com/qr.png?payload=dXBpR2xvYmFsOi8vc3RhcnRfdHJhbnNhY3Rpb24/dHI9MTIzJmZyb21fcXI9dHJ1ZQ==",
+            "type": "string"
+          },
+          "codePayload": {
+            "description": "The Scan Code payload to construct the image on the partner side.",
+            "example": "upiGlobal://pay?tr=123&from_desktop=true",
+            "type": "string"
+          },
+          "codeDocument": {
+            "description": "The url to a pdf/html payslip document.",
+            "example": "https://urltodocument.com",
+            "type": "string"
+          },
+          "scanBy": {
+            "description": "The custom expiry timestamp for paying in ISO 8601 format.",
+            "example": "2022-11-03T11:23:47.123Z",
+            "format": "date-time",
+            "type": "string"
+          }
+        }
+      },
+      "ScanCodeAuthenticationMethod": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuthenticationMethod"
+          },
+          {
+            "properties": {
+              "details": {
+                "$ref": "#/components/schemas/ScanCodeAuthenticationDetails"
+              },
+              "type": {
+                "description": "The SCAN_CODE authentication type.",
+                "enum": ["SCAN_CODE"],
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "ProcessorAuthorizationConfirmationRequest_authenticationResult": {
+        "description": "Provider authentication result",
+        "example": {
+          "details": {
+            "decision": "APPROVE",
+            "confirmationSource": "CONSUMER",
+            "authenticationToken": "auth_token"
+          },
+          "type": "REDIRECT"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/AppIntentAuthenticationResult"
+          },
+          {
+            "$ref": "#/components/schemas/AppNotificationAuthenticationResult"
+          },
+          {
+            "$ref": "#/components/schemas/MultiFactorAuthenticationResult"
+          },
+          {
+            "$ref": "#/components/schemas/RedirectAuthenticationResult"
+          },
+          {
+            "$ref": "#/components/schemas/ScanCodeAuthenticationResult"
+          }
+        ]
+      },
+      "Order_industryData_inner": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/AirlineIndustryData"
+          },
+          {
+            "$ref": "#/components/schemas/EducationIndustryData"
+          },
+          {
+            "$ref": "#/components/schemas/TravelIndustryData"
+          }
+        ]
+      },
+      "ProcessorAuthorizationRequest_authenticationSettings_inner": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/AppIntentAuthenticationSettings"
+          },
+          {
+            "$ref": "#/components/schemas/AppNotificationAuthenticationSettings"
+          },
+          {
+            "$ref": "#/components/schemas/MultiFactorAuthenticationSettings"
+          },
+          {
+            "$ref": "#/components/schemas/RedirectAuthenticationSettings"
+          },
+          {
+            "$ref": "#/components/schemas/ScanCodeAuthenticationSettings"
+          },
+          {
+            "$ref": "#/components/schemas/ThreeDSecureAuthenticationSettings"
+          }
+        ]
+      },
+      "ProcessorAuthorizationRequest_instrument": {
+        "description": "The instrument with which the consumer will make payment",
+        "example": {
+          "id": "instr_xLMRLH2wirPOF8XWNnN3h",
+          "type": "PASSTHROUGH_WALLET",
+          "details": {
+            "fingerprint": "HI8kcoMlRicmvRKYHHJjw"
+          }
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/BankAccountInstrument"
+          },
+          {
+            "$ref": "#/components/schemas/PassthroughWalletInstrument"
+          }
+        ]
+      },
+      "ProcessorAuthorizationResponse_authenticationMethods_inner": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/AppIntentAuthenticationMethod"
+          },
+          {
+            "$ref": "#/components/schemas/MultiFactorAuthenticationMethod"
+          },
+          {
+            "$ref": "#/components/schemas/RedirectAuthenticationMethod"
+          },
+          {
+            "$ref": "#/components/schemas/ScanCodeAuthenticationMethod"
+          }
+        ]
       }
     }
   },
   "x-readme": {
-    "samples-enabled": true,
-    "samples-languages": ["curl"],
-    "parameter-ordering": ["header", "path", "query", "body", "form"]
+    "explorer-enabled": true,
+    "proxy-enabled": true
   }
 }

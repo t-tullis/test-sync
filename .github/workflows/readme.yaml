@@ -31,10 +31,10 @@ jobs:
       #   with:
       #     rdme: docs documents --key=${{ secrets.README_OAS_TEST }} --version=1.0
 
-      - name: Sync to July7th-superhub-proj
-        uses: readmeio/rdme@v10.4.0
+      - name: Sync to trainingproj2024
+        uses: readmeio/rdme@v9
         with:
-          rdme: openapi upload --branch=${{ vars.RDME_BRANCH }} ./my-test.json --key=${{ secrets.README_OAS_TEST }}
+          rdme: openapi ./my-test.json --key=${{ secrets.LEGACY_OAS_KEY }} --version=5.0
 
       # - name: Sync to myproducttest
       #   uses: readmeio/rdme@v10
