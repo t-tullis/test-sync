@@ -34,7 +34,7 @@ jobs:
       - name: Sync to trainingproj2024
         uses: readmeio/rdme@v9
         with:
-          rdme: openapi ./my-test.json --key=${{ secrets.LEGACY_OAS_KEY }} --version=5.0
+          rdme: openapi ./my-test.json --key=${{ secrets.LEGACY_OAS_KEY }} --version=5.0 --create
 
       # - name: Sync to myproducttest
       #   uses: readmeio/rdme@v10
